@@ -408,9 +408,35 @@ Geodetic CRS:  WGS 84
 <section id="keep-necessary-fields-only" class="level5">
 <h5 class="anchored" data-anchor-id="keep-necessary-fields-only">3.1.2.1 Keep necessary fields only</h5>
 </section>
+<section id="checking-for-duplicate-name" class="level5">
+<h5 class="anchored" data-anchor-id="checking-for-duplicate-name">3.1.2.2 Checking for duplicate name</h5>
+<p><strong>3.1.2.3 Data Wrangling for Water Point Data</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">freq</span>(<span class="at">data =</span> wp_Osun,</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">input =</span> <span class="st">'#status_clean'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The `&lt;scale&gt;` argument of `guides()` cannot be `FALSE`. Use "none" instead as
+of ggplot2 3.3.4.
+ℹ The deprecated feature was likely used in the funModeling package.
+  Please report the issue at &lt;https://github.com/pablo14/funModeling/issues&gt;.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="Takehome_Ex01_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                     #status_clean frequency percentage cumulative_perc
+1                       Functional      2319      41.73           41.73
+2                   Non-Functional      2008      36.13           77.86
+3                             &lt;NA&gt;       748      13.46           91.32
+4      Functional but needs repair       248       4.46           95.78
+5 Non-Functional due to dry season       151       2.72           98.50
+6        Functional but not in use        63       1.13           99.63
+7                        Abandoned        15       0.27           99.90
+8         Abandoned/Decommissioned         5       0.09          100.00</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#change</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
-<section id="section" class="level4">
-<h4 class="anchored" data-anchor-id="section"></h4>
 </section>
 <section id="display-the-kernel-density-maps-on-openstreetmap-of-osub-state-nigeria." class="level4">
 <h4 class="anchored" data-anchor-id="display-the-kernel-density-maps-on-openstreetmap-of-osub-state-nigeria.">3.1.2Display the kernel density maps on openstreetmap of Osub State, Nigeria.</h4>
