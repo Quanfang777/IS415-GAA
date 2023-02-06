@@ -14,10 +14,6 @@ Water is an important resource to mankind. Clean and accessible water is critica
 Developing countries are most affected by water shortages and poor water quality. Up to 80% of illnesses in the developing world are linked to inadequate water and sanitation. Despite technological advancement, providing clean water to the rural community is still a major development issues in many countries globally, especially countries in the Africa continent.
 
 ## 2.Objectives
-```{r}
-pacman::p_load(tidyverse,sf)
-```
-## 
 
 ## 3.The Task
 
@@ -25,7 +21,11 @@ pacman::p_load(tidyverse,sf)
 
 #### 3.1.1Derive kernel density maps of functional and non-functional water points. Using appropriate tmap functions,
 
-3.1.1.1 Import the geospatial dataset
+3.1.1.1 Load necessary R-package and import the geospatial dataset
+
+```{r}
+pacman::p_load(maptools, sf, raster, spatstat, tmap)
+```
 
 ```{r}
 geoNGA <- st_read("data/geospatial/",
