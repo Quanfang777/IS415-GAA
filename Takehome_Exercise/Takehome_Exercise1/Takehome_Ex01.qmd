@@ -1,0 +1,60 @@
+---
+title: "TakeHome_Ex1"
+author: "Lu Quanfang"
+date: "30 January 2023"
+date_modified: "r Sys.Date()"
+---
+
+# Take-home Exercise 1: Application of Spatial Point Patterns Analysis to discover the geographical distribution of functional and non-function water points in Osub State, Nigeria
+
+## 1.Background
+
+Water is an important resource to mankind. Clean and accessible water is critical to human health. It provides a healthy environment, a sustainable economy, reduces poverty and ensures peace and security. Yet over 40% of the global population does not have access to sufficient clean water. By 2025, 1.8 billion people will be living in countries or regions with absolute water scarcity, according to UN-Water. The lack of water poses a major threat to several sectors, including food security. Agriculture uses about 70% of the world's accessible freshwater.
+
+Developing countries are most affected by water shortages and poor water quality. Up to 80% of illnesses in the developing world are linked to inadequate water and sanitation. Despite technological advancement, providing clean water to the rural community is still a major development issues in many countries globally, especially countries in the Africa continent.
+
+## 2.Objectives
+```{r}
+pacman::p_load(tidyverse,sf)
+```
+## 
+
+## 3.The Task
+
+### 3.1 Exploratory Spatial Data Analysis (ESDA)
+
+#### 3.1.1Derive kernel density maps of functional and non-functional water points. Using appropriate tmap functions,
+
+3.1.1.1 Import the geospatial dataset
+
+```{r}
+geoNGA <- st_read("data/geospatial/",
+                  layer = "geoBoundaries-NGA-ADM2") %>%
+  st_transform(crs = 26392)
+```
+
+```{r}
+NGA <- st_read("data/geospatial/",
+               layer = "nga_admbnda_adm2_osgof_20190417") %>%
+  st_transform(crs = 26392)
+```
+
+#### 3.1.2Display the kernel density maps on openstreetmap of Osub State, Nigeria.
+
+#### 3.1.3 Describe the spatial patterns revealed by the kernel density maps. Highlight the advantage of kernel density map over point map.
+
+### 3.2 Second-order Spatial Point Patterns Analysis
+
+#### 3.2.1 Formulate the null hypothesis and alternative hypothesis and select the confidence level.
+
+#### 3.2.2 Perform the test by using appropriate Second order spatial point patterns analysis technique.
+
+#### 3.2.3 With reference to the analysis results, draw statistical conclusions.
+
+### 3.3 Spatial Correlation Analysis
+
+#### 3.3.1 Formulate the null hypothesis and alternative hypothesis and select the confidence level.
+
+#### 3.3.2 Perform the test by using appropriate Second order spatial point patterns analysis technique.
+
+#### 3.3.3 With reference to the analysis results, draw statistical conclusions.
