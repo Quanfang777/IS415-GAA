@@ -176,6 +176,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <a class="dropdown-item" href="../../WeeklyExercise/week4/InClass_Ex04/InClass_Ex04.html">
  <span class="dropdown-text">In-Class Exercise 4</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../WeeklyExercise/week5/InClass_Ex05/InClass_Ex05.html">
+ <span class="dropdown-text">In-Class Exercise 5</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -206,7 +210,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <ul class="collapse">
   <li><a href="#background" id="toc-background" class="nav-link" data-scroll-target="#background">1.Background</a></li>
   <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">2.Objectives</a></li>
-  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"></a></li>
   <li><a href="#the-task" id="toc-the-task" class="nav-link" data-scroll-target="#the-task">3.The Task</a>
   <ul class="collapse">
   <li><a href="#exploratory-spatial-data-analysis-esda" id="toc-exploratory-spatial-data-analysis-esda" class="nav-link" data-scroll-target="#exploratory-spatial-data-analysis-esda">3.1 Exploratory Spatial Data Analysis (ESDA)</a></li>
@@ -257,12 +260,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="objectives" class="level2">
 <h2 class="anchored" data-anchor-id="objectives">2.Objectives</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse,sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="section" class="level2">
-<h2 class="anchored" data-anchor-id="section"></h2>
 </section>
 <section id="the-task" class="level2">
 <h2 class="anchored" data-anchor-id="the-task">3.The Task</h2>
@@ -270,7 +267,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="exploratory-spatial-data-analysis-esda">3.1 Exploratory Spatial Data Analysis (ESDA)</h3>
 <section id="derive-kernel-density-maps-of-functional-and-non-functional-water-points.-using-appropriate-tmap-functions" class="level4">
 <h4 class="anchored" data-anchor-id="derive-kernel-density-maps-of-functional-and-non-functional-water-points.-using-appropriate-tmap-functions">3.1.1Derive kernel density maps of functional and non-functional water points. Using appropriate tmap functions,</h4>
-<p>3.1.1.1 Import the geospatial dataset</p>
+<section id="load-necessary-r-package-and-import-the-geospatial-dataset" class="level5">
+<h5 class="anchored" data-anchor-id="load-necessary-r-package-and-import-the-geospatial-dataset">3.1.1.1 Load necessary R-package and import the geospatial dataset</h5>
+<p>The package we used for analysis are:</p>
+<ul>
+<li><p><strong>sf</strong>: For importing, managing and processing vector-based geospatial data</p></li>
+<li><p><strong>tidyverse</strong>: For performing data science tasks such as importing, wrangling and visualising data.</p></li>
+<li><p><strong>tmap</strong>: used for creating thematic maps, such as choropleth and bubble maps</p></li>
+<li><p><strong>raster:</strong> reads, writes, manipulates, analyses and models gridded spatial data</p></li>
+<li><p><strong>spatstat</strong>: used for point pattern analysis</p></li>
+<li><p><strong>maptools</strong>: a set of tools for manipulating geographic data</p></li>
+<li><p><strong>funModeling</strong>: used for exploratory data analysis</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(maptools, sf, tidyverse,raster, spatstat, tmap,funModeling)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>geoNGA <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/geospatial/"</span>,</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">layer =</span> <span class="st">"geoBoundaries-NGA-ADM2"</span>) <span class="sc">%&gt;%</span></span>
@@ -301,6 +312,105 @@ Bounding box:  xmin: 2.668534 ymin: 4.273007 xmax: 14.67882 ymax: 13.89442
 Geodetic CRS:  WGS 84</code></pre>
 </div>
 </div>
+<p>After checking both sf dataframes, we notice that NGA provide both LGA and state information. Hence, NGA data.frame will be selected for the subsequent processing.</p>
+</section>
+<section id="importing-aspatial-data" class="level5">
+<h5 class="anchored" data-anchor-id="importing-aspatial-data">3.1.1.2 Importing Aspatial data</h5>
+<p>As our target is to analysis the water points in Osun State,Nigeria, so let’s filter the data and selected only the observations in Osun State, Nigeria, the code is showing below</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>wp_Osun <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/aspatial/WPdx.csv"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">#clean_country_name</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"Nigeria"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span> (<span class="st">`</span><span class="at">#clean_adm1</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"Osun"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 406566 Columns: 70
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (43): #source, #report_date, #status_id, #water_source_clean, #water_sou...
+dbl (23): row_id, #lat_deg, #lon_deg, #install_year, #fecal_coliform_value, ...
+lgl  (4): #rehab_year, #rehabilitator, is_urban, latest_record
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+</section>
+<section id="converting-water-point-data-into-sf-point-features" class="level5">
+<h5 class="anchored" data-anchor-id="converting-water-point-data-into-sf-point-features">3.1.1.3 <strong>Converting water point data into sf point features</strong></h5>
+<p>In order to convert the point data into sf point feature for further analysis, first we need to convert the wkt field into sfc field by using st_as_sfc() data type.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>wp_Osun<span class="sc">$</span>Geometry <span class="ot">=</span> <span class="fu">st_as_sfc</span>(wp_Osun<span class="sc">$</span><span class="st">`</span><span class="at">New Georeferenced Column</span><span class="st">`</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>wp_Osun</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5,557 × 71
+   row_id `#source`      #lat_…¹ #lon_…² #repo…³ #stat…⁴ #wate…⁵ #wate…⁶ #wate…⁷
+    &lt;dbl&gt; &lt;chr&gt;            &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  
+ 1 429123 GRID3             8.02    5.06 08/29/… Unknown &lt;NA&gt;    &lt;NA&gt;    Tapsta…
+ 2  70566 Federal Minis…    7.32    4.79 05/11/… No      Protec… Well    Mechan…
+ 3  70578 Federal Minis…    7.76    4.56 05/11/… No      Boreho… Well    Mechan…
+ 4  66401 Federal Minis…    8.03    4.64 04/30/… No      Boreho… Well    Mechan…
+ 5 422190 GRID3             7.87    4.88 08/29/… Unknown &lt;NA&gt;    &lt;NA&gt;    Tapsta…
+ 6 422064 GRID3             7.7     4.89 08/29/… Unknown &lt;NA&gt;    &lt;NA&gt;    Tapsta…
+ 7  65607 Federal Minis…    7.89    4.71 05/12/… No      Boreho… Well    Mechan…
+ 8  68989 Federal Minis…    7.51    4.27 05/07/… No      Boreho… Well    &lt;NA&gt;   
+ 9  67708 Federal Minis…    7.48    4.35 04/29/… Yes     Boreho… Well    Mechan…
+10  66419 Federal Minis…    7.63    4.50 05/08/… Yes     Boreho… Well    Hand P…
+# … with 5,547 more rows, 62 more variables: `#water_tech_category` &lt;chr&gt;,
+#   `#facility_type` &lt;chr&gt;, `#clean_country_name` &lt;chr&gt;, `#clean_adm1` &lt;chr&gt;,
+#   `#clean_adm2` &lt;chr&gt;, `#clean_adm3` &lt;chr&gt;, `#clean_adm4` &lt;chr&gt;,
+#   `#install_year` &lt;dbl&gt;, `#installer` &lt;chr&gt;, `#rehab_year` &lt;lgl&gt;,
+#   `#rehabilitator` &lt;lgl&gt;, `#management_clean` &lt;chr&gt;, `#status_clean` &lt;chr&gt;,
+#   `#pay` &lt;chr&gt;, `#fecal_coliform_presence` &lt;chr&gt;,
+#   `#fecal_coliform_value` &lt;dbl&gt;, `#subjective_quality` &lt;chr&gt;, …</code></pre>
+</div>
+</div>
+<p>Then, use st_sf() to convert the tibble data.frame into sf object and also include the referencing system of the data into the sf object.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>wp_Osun <span class="ot">&lt;-</span> <span class="fu">st_sf</span>(wp_Osun, <span class="at">crs=</span><span class="dv">4326</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>wp_Osun</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 5557 features and 70 fields
+Geometry type: POINT
+Dimension:     XY
+Bounding box:  xmin: 4.032004 ymin: 7.060309 xmax: 5.06 ymax: 8.061898
+Geodetic CRS:  WGS 84
+# A tibble: 5,557 × 71
+   row_id `#source`      #lat_…¹ #lon_…² #repo…³ #stat…⁴ #wate…⁵ #wate…⁶ #wate…⁷
+ *  &lt;dbl&gt; &lt;chr&gt;            &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  
+ 1 429123 GRID3             8.02    5.06 08/29/… Unknown &lt;NA&gt;    &lt;NA&gt;    Tapsta…
+ 2  70566 Federal Minis…    7.32    4.79 05/11/… No      Protec… Well    Mechan…
+ 3  70578 Federal Minis…    7.76    4.56 05/11/… No      Boreho… Well    Mechan…
+ 4  66401 Federal Minis…    8.03    4.64 04/30/… No      Boreho… Well    Mechan…
+ 5 422190 GRID3             7.87    4.88 08/29/… Unknown &lt;NA&gt;    &lt;NA&gt;    Tapsta…
+ 6 422064 GRID3             7.7     4.89 08/29/… Unknown &lt;NA&gt;    &lt;NA&gt;    Tapsta…
+ 7  65607 Federal Minis…    7.89    4.71 05/12/… No      Boreho… Well    Mechan…
+ 8  68989 Federal Minis…    7.51    4.27 05/07/… No      Boreho… Well    &lt;NA&gt;   
+ 9  67708 Federal Minis…    7.48    4.35 04/29/… Yes     Boreho… Well    Mechan…
+10  66419 Federal Minis…    7.63    4.50 05/08/… Yes     Boreho… Well    Hand P…
+# … with 5,547 more rows, 62 more variables: `#water_tech_category` &lt;chr&gt;,
+#   `#facility_type` &lt;chr&gt;, `#clean_country_name` &lt;chr&gt;, `#clean_adm1` &lt;chr&gt;,
+#   `#clean_adm2` &lt;chr&gt;, `#clean_adm3` &lt;chr&gt;, `#clean_adm4` &lt;chr&gt;,
+#   `#install_year` &lt;dbl&gt;, `#installer` &lt;chr&gt;, `#rehab_year` &lt;lgl&gt;,
+#   `#rehabilitator` &lt;lgl&gt;, `#management_clean` &lt;chr&gt;, `#status_clean` &lt;chr&gt;,
+#   `#pay` &lt;chr&gt;, `#fecal_coliform_presence` &lt;chr&gt;,
+#   `#fecal_coliform_value` &lt;dbl&gt;, `#subjective_quality` &lt;chr&gt;, …</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="geospatial-data-cleaning" class="level4">
+<h4 class="anchored" data-anchor-id="geospatial-data-cleaning">3.1.2 <strong>Geospatial Data Cleaning</strong></h4>
+<section id="keep-necessary-fields-only" class="level5">
+<h5 class="anchored" data-anchor-id="keep-necessary-fields-only">3.1.2.1 Keep necessary fields only</h5>
+</section>
+</section>
+<section id="section" class="level4">
+<h4 class="anchored" data-anchor-id="section"></h4>
 </section>
 <section id="display-the-kernel-density-maps-on-openstreetmap-of-osub-state-nigeria." class="level4">
 <h4 class="anchored" data-anchor-id="display-the-kernel-density-maps-on-openstreetmap-of-osub-state-nigeria.">3.1.2Display the kernel density maps on openstreetmap of Osub State, Nigeria.</h4>

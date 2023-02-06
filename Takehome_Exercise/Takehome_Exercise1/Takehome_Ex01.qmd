@@ -55,6 +55,40 @@ NGA <- st_read("data/geospatial/",
   st_transform(crs = 26392)
 ```
 
+After checking both sf dataframes, we notice that NGA provide both LGA and state information. Hence, NGA data.frame will be selected for the subsequent processing.
+
+##### 3.1.1.2 Importing Aspatial data
+
+As our target is to analysis the water points in Osun State,Nigeria, so let's filter the data and selected only the observations in Osun State, Nigeria, the code is showing below
+
+```{r}
+wp_Osun <- read_csv("data/aspatial/WPdx.csv") %>%
+  filter(`#clean_country_name` == "Nigeria") %>%
+  filter (`#clean_adm1` == "Osun")
+```
+
+##### 3.1.1.3 **Converting water point data into sf point features**
+
+In order to convert the point data into sf point feature for further analysis, first we need to convert the wkt field into sfc field by using st_as_sfc() data type.
+
+```{r}
+wp_Osun$Geometry = st_as_sfc(wp_Osun$`New Georeferenced Column`)
+wp_Osun
+```
+
+Then, use st_sf() to convert the tibble data.frame into sf object and also include the referencing system of the data into the sf object.
+
+```{r}
+wp_Osun <- st_sf(wp_Osun, crs=4326)
+wp_Osun
+```
+
+#### 3.1.2 **Geospatial Data Cleaning**
+
+##### 3.1.2.1 Keep necessary fields only 
+
+#### 
+
 #### 3.1.2Display the kernel density maps on openstreetmap of Osub State, Nigeria.
 
 #### 3.1.3 Describe the spatial patterns revealed by the kernel density maps. Highlight the advantage of kernel density map over point map.
