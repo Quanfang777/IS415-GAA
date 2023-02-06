@@ -92,7 +92,26 @@ NGA <- NGA %>%
   select(c(3:4, 8:9))
 ```
 
-#### 
+##### 3.1.2.2 Checking for duplicate name
+
+```{r}
+# Get all the duplicated LGA names
+duplicated_LGA <- NGA$ADM2_EN[duplicated(NGA$ADM2_EN)==TRUE]
+
+# Get all the indices with names that are included in the duplicated LGA names
+duplicated_indices <- which(NGA$ADM2_EN %in% duplicated_LGA)
+
+# For every index in the duplicated_indices, concatenate the two columns with a comma
+for (ind in duplicated_indices) {
+  NGA$ADM2_EN[ind] <- paste(NGA$ADM2_EN[ind], NGA$ADM1_EN[ind], sep=", ")}
+```
+
+**3.1.2.3 Data Wrangling for Water Point Data**
+
+```{r}
+freq(data = wp_Osun,
+     input = '#status_clean')
+```
 
 #### 3.1.2Display the kernel density maps on openstreetmap of Osub State, Nigeria.
 
