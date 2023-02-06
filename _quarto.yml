@@ -2,18 +2,35 @@ project:
   type: website
 
 website:
-  title: "IS415-GAA"
+  title: "IS415_GAA"
   navbar:
     left:
-      - href: index.qmd
-        text: Home
-      - about.qmd
+      - text: "Hand-on Exercise"
+        menu: 
+          - text: "Hand-on Exercise2"
+            href: "WeeklyExercise/week2/Handon2/handon2.html"
+          - text: "Hand-on Exercise3"
+            href: "WeeklyExercise/week3/Week3_handon.html"   
+          - text: "Hand-on Exercise4"
+            href: "WeeklyExercise/week4/Hands-on_Ex04/Handon_Ex04.html"  
+      - text: "In-class Exercise"
+        menu: 
+          - text: "In-Class Exercise 2"
+            href: "WeeklyExercise/week2/In-Class_Ex02/InClassEx02.html"
+          - text: "In-Class Exercise 3"
+            href: "WeeklyExercise/week3/Week3_Inclass/Week3_Inclass.html"
+          - text: "In-Class Exercise 4"
+            href: "WeeklyExercise/week4/InClass_Ex04/InClass_Ex04.html"           
+      - text: "Takehome Exercise"
+        menu: 
+          - text: "Takehome_Exercise"
+            href: "Takehome_Exercise/Takehome_Exercise1/Takehome_Ex01.html"
+
 
 format:
   html:
-    theme: cosmo
+    theme: sketchy
     css: styles.css
     toc: true
 
 editor: visual
-
