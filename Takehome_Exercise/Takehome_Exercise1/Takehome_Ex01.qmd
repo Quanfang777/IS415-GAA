@@ -87,6 +87,11 @@ wp_Osun
 
 ##### 3.1.2.1 Keep necessary fields only 
 
+```{r}
+NGA <- NGA %>%
+  select(c(3:4, 8:9))
+```
+
 #### 
 
 #### 3.1.2Display the kernel density maps on openstreetmap of Osub State, Nigeria.
