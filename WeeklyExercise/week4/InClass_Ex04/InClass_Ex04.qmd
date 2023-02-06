@@ -1,0 +1,69 @@
+---
+title: "InClass_Ex04"
+author: "Lu Quanfang"
+date: "30 January 2023"
+date_modified: "'r Sys.Date()'"
+execute: 
+  eval: true
+  echo: true
+  warning: false
+editor: visual
+---
+
+## Getting Started
+
+## Installing and Loading the R packages
+
+```{r}
+pacman::p_load(maptools, sf, raster, spatstat, tmap)
+```
+
+## Importing the spatial data
+
+```{r}
+#chunk2
+childcare_sf <- st_read("data/child-care-services-geojson.geojson") %>%
+  st_transform(crs = 3414)
+```
+
+```{r}
+sg_sf <- st_read(dsn = "data", layer="CostalOutline")
+```
+
+```{r}
+##hellp
+mpsz_sf <- st_read(dsn = "data", 
+                layer = "MP14_SUBZONE_WEB_PL")
+```
+
+```{r}
+mpsz3414 <- st_set_crs(mpsz_sf, 3414) 
+```
+
+```{r}
+childcare <- as_Spatial(childcare_sf)
+mpsz <- as_Spatial(mpsz_sf)
+sg <- as_Spatial(sg_sf)
+```
+
+```{r}
+childcare_sp <- as(childcare, "SpatialPoints")
+sg_sp <- as(sg, "SpatialPolygons")
+```
+
+```{r}
+childcare_ppp <- as(childcare_sp, "ppp")
+childcare_ppp
+```
+
+```{r}
+tmap_mode("plot")
+
+tm_shape(mpsz3414)+ tm_polygons() + tm_shape(childcare_sf) + tm_dots()
+```
+
+```{r}
+tmap_mode('view')
+tm_shape(childcare_sf)+tm_dots(alpha=0.5,size=0.01)+tm_view(set.zoom.limits = c(11,14))
+
+```
