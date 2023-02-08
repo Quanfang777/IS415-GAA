@@ -5,7 +5,7 @@ date: "30 January 2023"
 date_modified: "r Sys.Date()"
 ---
 
-# Take-home Exercise 1: Application of Spatial Point Patterns Analysis to discover the geographical distribution of functional and non-function water points in Osub State, Nigeria
+# Analysis on the geographic distribution of functional and non-function water points in Osub State, Nigeria
 
 ## 1.Background
 
@@ -15,13 +15,15 @@ Developing countries are most affected by water shortages and poor water quality
 
 ## 2.Objectives
 
-## 3.The Task
+Apply appropriate spatial point patterns analysis method to discover the geographical distribution of functional and non-function water points an and their co-locations
+
+## 3.The Steps at a glance
+
+To achieve the purpose of discovering the geographic distribution of functional and non-functional water points and their co-locations, here is the graph of my working flow so that you can get a quick, overall understanding about the entire process by visualizing it.
 
 ### 3.1 Exploratory Spatial Data Analysis (ESDA)
 
-#### 3.1.1Derive kernel density maps of functional and non-functional water points. Using appropriate tmap functions,
-
-##### 3.1.1.1 Load necessary R-package and import the geospatial dataset
+##### 3.1.1 Load necessary R-package and import the geospatial dataset
 
 The package we used for analysis are:
 
@@ -39,9 +41,13 @@ The package we used for analysis are:
 
 -   **funModeling**: used for exploratory data analysis
 
+Let's load the package required!
+
 ```{r}
 pacman::p_load(maptools, sf, tidyverse,raster, spatstat, tmap,funModeling)
 ```
+
+Here are two possible datasets that we can obtain the geospatial information of Nigeria from, one is from [Humanitarian Data Exchange](https://data.humdata.org/) portal, the other is from [geoBoundaries](https://www.geoboundaries.org/), let's read both of the datasets and examine which one is more suitable to use, **notice that the crs for Nigeria should be 23692, so we need to assign the crs after reading the data**:
 
 ```{r}
 geoNGA <- st_read("data/geospatial/",
@@ -57,17 +63,35 @@ NGA <- st_read("data/geospatial/",
 
 After checking both sf dataframes, we notice that NGA provide both LGA and state information. Hence, NGA data.frame will be selected for the subsequent processing.
 
-##### 3.1.1.2 Importing Aspatial data
+##### 3.1.2 Importing Aspatial data
 
-As our target is to analysis the water points in Osun State,Nigeria, so let's filter the data and selected only the observations in Osun State, Nigeria, the code is showing below
+As our target is to analysis the water points in Osun State,Nigeria,(the area colored in red) so let's filter the data and selected only the observations in Osun State, Nigeria![](graph%20used/location%20of%20Osun%20State.jpg){width="380"}
+
+(Fig1: [Location of Osun State](https://en.wikipedia.org/wiki/Osun_State))
 
 ```{r}
 wp_Osun <- read_csv("data/aspatial/WPdx.csv") %>%
   filter(`#clean_country_name` == "Nigeria") %>%
-  filter (`#clean_adm1` == "Osun")
+  filter (`#clean_adm1` == "Osun") 
 ```
 
-##### 3.1.1.3 **Converting water point data into sf point features**
+##### 3.1.3 Mappng the geospatial data sets
+
+```{r}
+#Let's display the studyarea - Osun on the map:
+NGA_Osun <- NGA%>%
+  filter(`ADM1_EN` == "Osun")
+```
+
+```{r}
+tmap_mode('plot')
+tm_shape(NGA_Osun)+tm_polygons()
+
+```
+
+Compared to the map (Fig.1) we know that we have successfully obtained the geospatial information of Osun
+
+##### 3.1.4 **Converting water point data into sf point features**
 
 In order to convert the point data into sf point feature for further analysis, first we need to convert the wkt field into sfc field by using st_as_sfc() data type.
 
@@ -83,9 +107,16 @@ wp_Osun <- st_sf(wp_Osun, crs=4326)
 wp_Osun
 ```
 
+After assigning a crs to our sf object of wp_Osun, let's transforming it into Nigeria projected coordinate system
+
+```{r}
+wp_Osun <- wp_Osun %>%
+  st_transform(crs = 26392)
+```
+
 #### 3.1.2 **Geospatial Data Cleaning**
 
-##### 3.1.2.1 Keep necessary fields only 
+##### 3.1.2.1 Keep necessary fields only
 
 ##### 3.1.2.2 Checking for duplicate name
 

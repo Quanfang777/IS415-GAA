@@ -206,11 +206,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#take-home-exercise-1-application-of-spatial-point-patterns-analysis-to-discover-the-geographical-distribution-of-functional-and-non-function-water-points-in-osub-state-nigeria" id="toc-take-home-exercise-1-application-of-spatial-point-patterns-analysis-to-discover-the-geographical-distribution-of-functional-and-non-function-water-points-in-osub-state-nigeria" class="nav-link active" data-scroll-target="#take-home-exercise-1-application-of-spatial-point-patterns-analysis-to-discover-the-geographical-distribution-of-functional-and-non-function-water-points-in-osub-state-nigeria">Take-home Exercise 1: Application of Spatial Point Patterns Analysis to discover the geographical distribution of functional and non-function water points in Osub State, Nigeria</a>
+  <li><a href="#analysis-on-the-geographic-distribution-of-functional-and-non-function-water-points-in-osub-state-nigeria" id="toc-analysis-on-the-geographic-distribution-of-functional-and-non-function-water-points-in-osub-state-nigeria" class="nav-link active" data-scroll-target="#analysis-on-the-geographic-distribution-of-functional-and-non-function-water-points-in-osub-state-nigeria">Analysis on the geographic distribution of functional and non-function water points in Osub State, Nigeria</a>
   <ul class="collapse">
   <li><a href="#background" id="toc-background" class="nav-link" data-scroll-target="#background">1.Background</a></li>
   <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">2.Objectives</a></li>
-  <li><a href="#the-task" id="toc-the-task" class="nav-link" data-scroll-target="#the-task">3.The Task</a>
+  <li><a href="#the-steps-at-a-glance" id="toc-the-steps-at-a-glance" class="nav-link" data-scroll-target="#the-steps-at-a-glance">3.The Steps at a glance</a>
   <ul class="collapse">
   <li><a href="#exploratory-spatial-data-analysis-esda" id="toc-exploratory-spatial-data-analysis-esda" class="nav-link" data-scroll-target="#exploratory-spatial-data-analysis-esda">3.1 Exploratory Spatial Data Analysis (ESDA)</a></li>
   <li><a href="#second-order-spatial-point-patterns-analysis" id="toc-second-order-spatial-point-patterns-analysis" class="nav-link" data-scroll-target="#second-order-spatial-point-patterns-analysis">3.2 Second-order Spatial Point Patterns Analysis</a></li>
@@ -251,8 +251,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<section id="take-home-exercise-1-application-of-spatial-point-patterns-analysis-to-discover-the-geographical-distribution-of-functional-and-non-function-water-points-in-osub-state-nigeria" class="level1">
-<h1>Take-home Exercise 1: Application of Spatial Point Patterns Analysis to discover the geographical distribution of functional and non-function water points in Osub State, Nigeria</h1>
+<section id="analysis-on-the-geographic-distribution-of-functional-and-non-function-water-points-in-osub-state-nigeria" class="level1">
+<h1>Analysis on the geographic distribution of functional and non-function water points in Osub State, Nigeria</h1>
 <section id="background" class="level2">
 <h2 class="anchored" data-anchor-id="background">1.Background</h2>
 <p>Water is an important resource to mankind. Clean and accessible water is critical to human health. It provides a healthy environment, a sustainable economy, reduces poverty and ensures peace and security. Yet over 40% of the global population does not have access to sufficient clean water. By 2025, 1.8 billion people will be living in countries or regions with absolute water scarcity, according to UN-Water. The lack of water poses a major threat to several sectors, including food security. Agriculture uses about 70% of the world’s accessible freshwater.</p>
@@ -260,15 +260,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="objectives" class="level2">
 <h2 class="anchored" data-anchor-id="objectives">2.Objectives</h2>
+<p>Apply appropriate spatial point patterns analysis method to discover the geographical distribution of functional and non-function water points an and their co-locations</p>
 </section>
-<section id="the-task" class="level2">
-<h2 class="anchored" data-anchor-id="the-task">3.The Task</h2>
+<section id="the-steps-at-a-glance" class="level2">
+<h2 class="anchored" data-anchor-id="the-steps-at-a-glance">3.The Steps at a glance</h2>
+<p>To achieve the purpose of discovering the geographic distribution of functional and non-functional water points and their co-locations, here is the graph of my working flow so that you can get a quick, overall understanding about the entire process by visualizing it.</p>
 <section id="exploratory-spatial-data-analysis-esda" class="level3">
 <h3 class="anchored" data-anchor-id="exploratory-spatial-data-analysis-esda">3.1 Exploratory Spatial Data Analysis (ESDA)</h3>
-<section id="derive-kernel-density-maps-of-functional-and-non-functional-water-points.-using-appropriate-tmap-functions" class="level4">
-<h4 class="anchored" data-anchor-id="derive-kernel-density-maps-of-functional-and-non-functional-water-points.-using-appropriate-tmap-functions">3.1.1Derive kernel density maps of functional and non-functional water points. Using appropriate tmap functions,</h4>
 <section id="load-necessary-r-package-and-import-the-geospatial-dataset" class="level5">
-<h5 class="anchored" data-anchor-id="load-necessary-r-package-and-import-the-geospatial-dataset">3.1.1.1 Load necessary R-package and import the geospatial dataset</h5>
+<h5 class="anchored" data-anchor-id="load-necessary-r-package-and-import-the-geospatial-dataset">3.1.1 Load necessary R-package and import the geospatial dataset</h5>
 <p>The package we used for analysis are:</p>
 <ul>
 <li><p><strong>sf</strong>: For importing, managing and processing vector-based geospatial data</p></li>
@@ -279,9 +279,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p><strong>maptools</strong>: a set of tools for manipulating geographic data</p></li>
 <li><p><strong>funModeling</strong>: used for exploratory data analysis</p></li>
 </ul>
+<p>Let’s load the package required!</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(maptools, sf, tidyverse,raster, spatstat, tmap,funModeling)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Here are two possible datasets that we can obtain the geospatial information of Nigeria from, one is from <a href="https://data.humdata.org/">Humanitarian Data Exchange</a> portal, the other is from <a href="https://www.geoboundaries.org/">geoBoundaries</a>, let’s read both of the datasets and examine which one is more suitable to use, <strong>notice that the crs for Nigeria should be 23692, so we need to assign the crs after reading the data</strong>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>geoNGA <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/geospatial/"</span>,</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">layer =</span> <span class="st">"geoBoundaries-NGA-ADM2"</span>) <span class="sc">%&gt;%</span></span>
@@ -315,12 +317,13 @@ Geodetic CRS:  WGS 84</code></pre>
 <p>After checking both sf dataframes, we notice that NGA provide both LGA and state information. Hence, NGA data.frame will be selected for the subsequent processing.</p>
 </section>
 <section id="importing-aspatial-data" class="level5">
-<h5 class="anchored" data-anchor-id="importing-aspatial-data">3.1.1.2 Importing Aspatial data</h5>
-<p>As our target is to analysis the water points in Osun State,Nigeria, so let’s filter the data and selected only the observations in Osun State, Nigeria, the code is showing below</p>
+<h5 class="anchored" data-anchor-id="importing-aspatial-data">3.1.2 Importing Aspatial data</h5>
+<p>As our target is to analysis the water points in Osun State,Nigeria,(the area colored in red) so let’s filter the data and selected only the observations in Osun State, Nigeria<img src="graph%20used/location%20of%20Osun%20State.jpg" class="img-fluid" width="380"></p>
+<p>(Fig1: <a href="https://en.wikipedia.org/wiki/Osun_State">Location of Osun State</a>)</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>wp_Osun <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/aspatial/WPdx.csv"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">#clean_country_name</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"Nigeria"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span> (<span class="st">`</span><span class="at">#clean_adm1</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"Osun"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span> (<span class="st">`</span><span class="at">#clean_adm1</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"Osun"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: One or more parsing issues, call `problems()` on your data frame for details,
 e.g.:
@@ -340,12 +343,31 @@ lgl  (4): #rehab_year, #rehabilitator, is_urban, latest_record
 </div>
 </div>
 </section>
+<section id="mappng-the-geospatial-data-sets" class="level5">
+<h5 class="anchored" data-anchor-id="mappng-the-geospatial-data-sets">3.1.3 Mappng the geospatial data sets</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Let's display the studyarea - Osun on the map:</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>NGA_Osun <span class="ot">&lt;-</span> NGA<span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">ADM1_EN</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"Osun"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">'plot'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>tmap mode set to plotting</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(NGA_Osun)<span class="sc">+</span><span class="fu">tm_polygons</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Takehome_Ex01_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Compared to the map (Fig.1) we know that we have successfully obtained the geospatial information of Osun</p>
+</section>
 <section id="converting-water-point-data-into-sf-point-features" class="level5">
-<h5 class="anchored" data-anchor-id="converting-water-point-data-into-sf-point-features">3.1.1.3 <strong>Converting water point data into sf point features</strong></h5>
+<h5 class="anchored" data-anchor-id="converting-water-point-data-into-sf-point-features">3.1.4 <strong>Converting water point data into sf point features</strong></h5>
 <p>In order to convert the point data into sf point feature for further analysis, first we need to convert the wkt field into sfc field by using st_as_sfc() data type.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>wp_Osun<span class="sc">$</span>Geometry <span class="ot">=</span> <span class="fu">st_as_sfc</span>(wp_Osun<span class="sc">$</span><span class="st">`</span><span class="at">New Georeferenced Column</span><span class="st">`</span>)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>wp_Osun</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>wp_Osun<span class="sc">$</span>Geometry <span class="ot">=</span> <span class="fu">st_as_sfc</span>(wp_Osun<span class="sc">$</span><span class="st">`</span><span class="at">New Georeferenced Column</span><span class="st">`</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>wp_Osun</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5,557 × 71
    row_id `#source`      #lat_…¹ #lon_…² #repo…³ #stat…⁴ #wate…⁵ #wate…⁶ #wate…⁷
@@ -371,8 +393,8 @@ lgl  (4): #rehab_year, #rehabilitator, is_urban, latest_record
 </div>
 <p>Then, use st_sf() to convert the tibble data.frame into sf object and also include the referencing system of the data into the sf object.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>wp_Osun <span class="ot">&lt;-</span> <span class="fu">st_sf</span>(wp_Osun, <span class="at">crs=</span><span class="dv">4326</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>wp_Osun</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>wp_Osun <span class="ot">&lt;-</span> <span class="fu">st_sf</span>(wp_Osun, <span class="at">crs=</span><span class="dv">4326</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>wp_Osun</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Simple feature collection with 5557 features and 70 fields
 Geometry type: POINT
@@ -401,7 +423,11 @@ Geodetic CRS:  WGS 84
 #   `#fecal_coliform_value` &lt;dbl&gt;, `#subjective_quality` &lt;chr&gt;, …</code></pre>
 </div>
 </div>
-</section>
+<p>After assigning a crs to our sf object of wp_Osun, let’s transforming it into Nigeria projected coordinate system</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>wp_Osun <span class="ot">&lt;-</span> wp_Osun <span class="sc">%&gt;%</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">26392</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="geospatial-data-cleaning" class="level4">
 <h4 class="anchored" data-anchor-id="geospatial-data-cleaning">3.1.2 <strong>Geospatial Data Cleaning</strong></h4>
@@ -412,8 +438,8 @@ Geodetic CRS:  WGS 84
 <h5 class="anchored" data-anchor-id="checking-for-duplicate-name">3.1.2.2 Checking for duplicate name</h5>
 <p><strong>3.1.2.3 Data Wrangling for Water Point Data</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">freq</span>(<span class="at">data =</span> wp_Osun,</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">input =</span> <span class="st">'#status_clean'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">freq</span>(<span class="at">data =</span> wp_Osun,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">input =</span> <span class="st">'#status_clean'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: The `&lt;scale&gt;` argument of `guides()` cannot be `FALSE`. Use "none" instead as
 of ggplot2 3.3.4.
@@ -421,7 +447,7 @@ of ggplot2 3.3.4.
   Please report the issue at &lt;https://github.com/pablo14/funModeling/issues&gt;.</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="Takehome_Ex01_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+<p><img src="Takehome_Ex01_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                     #status_clean frequency percentage cumulative_perc
@@ -434,7 +460,7 @@ of ggplot2 3.3.4.
 7                        Abandoned        15       0.27           99.90
 8         Abandoned/Decommissioned         5       0.09          100.00</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#change</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#change</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
