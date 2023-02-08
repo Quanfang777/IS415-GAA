@@ -44,7 +44,16 @@ The package we used for analysis are:
 Let's load the package required!
 
 ```{r}
-pacman::p_load(maptools, sf, tidyverse,raster, spatstat, tmap,funModeling)
+packages = c('sf', 'tidyverse', 'tmap', 'spatstat', 'raster', 'maptools', 'rgdal',
+             'kableExtra', 'plotly', 'ggthemes', 'onemapsgapi', 'devtools','funModeling')
+
+# for each package, check if installed and if not, install it
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
 ```
 
 Here are two possible datasets that we can obtain the geospatial information of Nigeria from, one is from [Humanitarian Data Exchange](https://data.humdata.org/) portal, the other is from [geoBoundaries](https://www.geoboundaries.org/), let's read both of the datasets and examine which one is more suitable to use, **notice that the crs for Nigeria should be 23692, so we need to assign the crs after reading the data**:
@@ -65,7 +74,9 @@ After checking both sf dataframes, we notice that NGA provide both LGA and state
 
 ##### 3.1.2 Importing Aspatial data
 
-As our target is to analysis the water points in Osun State,Nigeria,(the area colored in red) so let's filter the data and selected only the observations in Osun State, Nigeria![](graph%20used/location%20of%20Osun%20State.jpg){width="380"}
+As our target is to analysis the water points in Osun State,Nigeria,(the area colored in red) so let's filter the data and selected only the observations in Osun State, Nigeria
+
+![](graph%20used/location%20of%20Osun%20State.jpg){width="380"}
 
 (Fig1: [Location of Osun State](https://en.wikipedia.org/wiki/Osun_State))
 
@@ -116,27 +127,277 @@ wp_Osun <- wp_Osun %>%
 
 #### 3.1.2 **Geospatial Data Cleaning**
 
-##### 3.1.2.1 Keep necessary fields only
-
 ##### 3.1.2.2 Checking for duplicate name
 
+It is always important for us to check for duplicate name in the data main data fields. Here are the steps of properly handling the duplication
+
+```{r}
+# Get all the duplicated LGA names
+duplicated_LGA <- NGA_Osun$ADM2_EN[duplicated(NGA_Osun$ADM2_EN)==TRUE]
+
+# Get all the indices with names that are included in the duplicated LGA names
+duplicated_indices <- which(NGA_Osun$ADM2_EN %in% duplicated_LGA)
+
+# For every index in the duplicated_indices, concatenate the two columns with a comma
+for (ind in duplicated_indices) {
+  NGA_Osun$ADM2_EN[ind] <- paste(NGA_Osun$ADM2_EN[ind], NGA_Osun$ADM1_EN[ind], sep=", ")
+}
+```
+
+Let's confirm if there is any duplication
+
+```{r}
+NGA_Osun$ADM2_EN[duplicated(NGA_Osun$ADM2_EN)==TRUE]
+```
+
 **3.1.2.3 Data Wrangling for Water Point Data**
+
+Let's have a quick understanding of our water point data
 
 ```{r}
 freq(data = wp_Osun,
      input = '#status_clean')
-#change
+```
+
+We can see that there are 9 classes in the #status_clean field, and there is a class called NA, for easy handling the subsequent steps and make it a more meaningful analysis, we can recode the NA values into unknow, meanwhile we can also remove the '\#' sign before the #status_clean field by using the code below:
+
+```{r}
+wp_Osun <- wp_Osun  %>% 
+  rename(status_clean = '#status_clean') %>%
+  select(status_clean) %>%
+  mutate(status_clean = replace_na(
+    status_clean, "unknown"))
+```
+
+#### Extracting Water Point Data
+
+Now, let's extract the water point data in Osun state according to their status.
+
+To extract functional water point:
+
+```{r}
+wp_Osun_functional <- wp_Osun %>%
+  filter(status_clean %in%
+           c("Functional",
+             "Functional but not in use",
+             "Functional but needs repair"))
+```
+
+To extract non-functional water point:
+
+```{r}
+wp_Osun_nonfunctional <- wp_Osun %>%
+  filter(status_clean %in%
+           c("Abandoned/Decommissioned",
+             "Abandoned",
+             "Non-Functional due to dry season",
+             "Non-Functional",
+             "Non functional due to dry season"))
+```
+
+To extract water point with unknown status
+
+```{r}
+wp_Osun_unknown <- wp_Osun %>%
+  filter(status_clean == "unknown")
+```
+
+Let's have an understanding for the number of total, functional, nonfunctional and unknown water points in Osun
+
+```{r}
+NGA_Osun_wp <- NGA_Osun %>% 
+  mutate(`total_wp` = lengths(
+    st_intersects(NGA_Osun, wp_Osun))) %>%
+  mutate(`wp_functional` = lengths(
+    st_intersects(NGA_Osun, wp_Osun_functional))) %>%
+  mutate(`wp_nonfunctional` = lengths(
+    st_intersects(NGA_Osun, wp_Osun_nonfunctional))) %>%
+  mutate(`wp_unknown` = lengths(
+    st_intersects(NGA_Osun, wp_Osun_unknown)))
+```
+
+```{r}
+p1 <- tm_shape(NGA_Osun_wp) +
+  tm_fill("wp_Osun_functional",
+          n = 5,
+          style = "equal",
+          palette = "Blues") +
+  tm_borders(lwd = 0.1,
+             alpha = 1) +
+  tm_layout(main.title = "Distribution of functional water point in Osun",
+            legend.outside = FALSE)
+```
+
+```{r}
+p2 <- tm_shape(NGA_Osun_wp) +
+  tm_fill("total_wp",
+          n = 5,
+          style = "equal",
+          palette = "Blues") +
+  tm_borders(lwd = 0.1,
+             alpha = 1) +
+  tm_layout(main.title = "Distribution of total  water point in Osun",
+            legend.outside = FALSE)
+```
+
+```{r}
+###tmap_arrange(p2, p1, nrow = 1)
 ```
 
 #### 3.1.2Display the kernel density maps on openstreetmap of Osub State, Nigeria.
 
+Converting sf data frames to sp's Spatial\* class
+
+```{r}
+wp_Osun_functional <- as_Spatial(wp_Osun_functional)
+wp_Osun_nonfunctional<- as_Spatial(wp_Osun_nonfunctional)
+NGA_Osun_sp <- as_Spatial(NGA_Osun_wp)
+
+```
+
+#### **Converting the Spatial\* class into generic sp format**
+
+```{r}
+wp_Osun_functional_sp <- as(wp_Osun_functional, "SpatialPoints")
+wp_Osun_nonfunctional_sp <- as(wp_Osun_nonfunctional, "SpatialPoints")
+NGA_Osun_sp<- as(NGA_Osun_sp, "SpatialPolygons")
+```
+
+#### Converting the generic sp format into spatstat's ppp format
+
+```{r}
+wp_Osun_functional_ppp <- as(wp_Osun_functional, "ppp")
+wp_Osun_functional_ppp
+
+```
+
+```{r}
+wp_Osun_nonfunctional_ppp <- as(wp_Osun_nonfunctional, "ppp")
+wp_Osun_nonfunctional_ppp
+
+```
+
+### Handling duplicated points
+
+```{r}
+any(duplicated(wp_Osun_functional_ppp))
+```
+
+```{r}
+any(duplicated(wp_Osun_nonfunctional_ppp))
+```
+
+### Creating ***owin*** object
+
+```{r}
+Osun_owin <- as(NGA_Osun_sp, "owin")
+```
+
+```{r}
+plot(Osun_owin)
+```
+
+### Combining point events object and owin object
+
+```{r}
+wp_Osun_functional_ppp = wp_Osun_functional_ppp[Osun_owin]
+wp_Osun_nonfunctional_ppp = wp_Osun_nonfunctional_ppp[Osun_owin]
+```
+
+```{r}
+kde_Osun_functional_bw<- density(wp_Osun_functional_ppp,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian") 
+```
+
+```{r}
+kde_Osun_nonfunctional_bw<- density(wp_Osun_nonfunctional_ppp,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                            kernel="gaussian") 
+```
+
+```{r}
+plot(kde_Osun_functional_bw)
+```
+
+```{r}
+bw <- bw.diggle(wp_Osun_functional_ppp)
+bw
+```
+
+### Rescalling KDE values
+
+(how to select sigma?)
+
+```{r}
+wp_Osun_functional_ppp.km <- rescale(wp_Osun_functional_ppp, 1000, "km")
+```
+
+```{r}
+wp_Osun_nonfunctional_ppp.km <- rescale(wp_Osun_nonfunctional_ppp, 1000, "km")
+```
+
+```{r}
+kde_Osun_functional.bw <- density(wp_Osun_functional_ppp.km, sigma=bw.diggle, edge=TRUE, kernel="gaussian")
+plot(kde_Osun_functional.bw)
+```
+
+\]
+
+```{r}
+kde_Osun_nonfunctional.bw <- density(wp_Osun_nonfunctional_ppp.km, sigma=bw.diggle, edge=TRUE, kernel="gaussian")
+plot(kde_Osun_nonfunctional.bw)
+```
+
 #### 3.1.3 Describe the spatial patterns revealed by the kernel density maps. Highlight the advantage of kernel density map over point map.
+
+```{r}
+tmap_mode("view")
+tm_shape(NGA_Osun) +
+  tm_polygons() +
+tm_shape(wp_Osun)+ 
+  tm_dots(col = "status_clean",
+             size = 0.01,
+             border.col = "black",
+             border.lwd = 0.5) +
+  tm_view(set.zoom.limits = c(8, 16))
+```
 
 ### 3.2 Second-order Spatial Point Patterns Analysis
 
 #### 3.2.1 Formulate the null hypothesis and alternative hypothesis and select the confidence level.
 
+Testing spatial point patterns using Clark and Evans Test
+
+```{r}
+clarkevans.test(wp_Osun_functional_ppp,
+                correction="none",
+                clipregion="sg_owin",
+                alternative=c("clustered"),
+                nsim=99)
+```
+
+```{r}
+clarkevans.test(wp_Osun_nonfunctional_ppp,
+                correction="none",
+                clipregion="sg_owin",
+                alternative=c("clustered"),
+                nsim=99)
+```
+
 #### 3.2.2 Perform the test by using appropriate Second order spatial point patterns analysis technique.
+
+```{r}
+G_CK = Gest(wp_Osun_functional_ppp, correction = "border")
+plot(G_CK, xlim=c(0,500))
+```
+
+```{r}
+G_CK = Gest(wp_Osun_nonfunctional_ppp, correction = "border")
+plot(G_CK, xlim=c(0,500))
+```
 
 #### 3.2.3 With reference to the analysis results, draw statistical conclusions.
 
