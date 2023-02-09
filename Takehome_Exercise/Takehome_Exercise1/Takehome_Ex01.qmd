@@ -3,6 +3,8 @@ title: "TakeHome_Ex1"
 author: "Lu Quanfang"
 date: "30 January 2023"
 date_modified: "r Sys.Date()"
+execute: 
+  output: false
 ---
 
 # Analysis on the geographic distribution of functional and non-function water points in Osub State, Nigeria
@@ -44,16 +46,7 @@ The package we used for analysis are:
 Let's load the package required!
 
 ```{r}
-packages = c('sf', 'tidyverse', 'tmap', 'spatstat', 'raster', 'maptools', 'rgdal',
-             'kableExtra', 'plotly', 'ggthemes', 'onemapsgapi', 'devtools','funModeling')
-
-# for each package, check if installed and if not, install it
-for (p in packages){
-  if(!require(p, character.only = T)){
-    install.packages(p)
-  }
-  library(p,character.only = T)
-}
+pacman::p_load(maptools, sf, raster, spatstat, tmap,tidyverse,plotly,funModeling,raster)
 ```
 
 Here are two possible datasets that we can obtain the geospatial information of Nigeria from, one is from [Humanitarian Data Exchange](https://data.humdata.org/) portal, the other is from [geoBoundaries](https://www.geoboundaries.org/), let's read both of the datasets and examine which one is more suitable to use, **notice that the crs for Nigeria should be 23692, so we need to assign the crs after reading the data**:
@@ -374,7 +367,7 @@ Testing spatial point patterns using Clark and Evans Test
 ```{r}
 clarkevans.test(wp_Osun_functional_ppp,
                 correction="none",
-                clipregion="sg_owin",
+                clipregion="Osun_owin",
                 alternative=c("clustered"),
                 nsim=99)
 ```
@@ -400,6 +393,12 @@ plot(G_CK, xlim=c(0,500))
 ```
 
 #### 3.2.3 With reference to the analysis results, draw statistical conclusions.
+
+```{r}
+L_ck = Lest(wp_Osun_functional_ppp, correction = "Ripley")
+plot(L_ck, . -r ~ r, 
+     ylab= "L(d)-r", xlab = "d(m)")
+```
 
 ### 3.3 Spatial Correlation Analysis
 
