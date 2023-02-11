@@ -40,7 +40,7 @@ The package we used for analysis are:
 Let's load the package required!
 
 ```{r}
-pacman::p_load(maptools, sf, raster, spatstat, tmap,tidyverse,plotly,funModeling,raster)
+pacman::p_load(maptools, sf, raster, spatstat, tmap,tidyverse,plotly,funModeling,sfdep)
 ```
 
 Here are two possible datasets that we can obtain the geospatial information of Nigeria from, one is from [Humanitarian Data Exchange](https://data.humdata.org/) portal, the other is from [geoBoundaries](https://www.geoboundaries.org/), let's read both of the datasets and examine which one is more suitable to use, **notice that the crs for Nigeria should be 23692, so we need to assign the crs after reading the data**:
@@ -249,7 +249,6 @@ wp_Osun_functional_ppp
 ```{r}
 wp_Osun_nonfunctional_ppp <- as(wp_Osun_nonfunctional, "ppp")
 wp_Osun_nonfunctional_ppp
-
 ```
 
 ### Handling duplicated points
@@ -367,11 +366,57 @@ plot(kde_Osun_nonfunctional.bw, main = "Fixed bandwidth")
 plot(wp_Osun_nonfunctional_adaptive, main = "Adaptive bandwidth")
 ```
 
+**Converting KDE output into grid object.**
+We need to convert the KDE output so that it is suitable for mapping purposes
+
+```{r}
+kde_functionalwp_raster <- kde_Osun_functional.bw  %>%
+  as.SpatialGridDataFrame.im() %>%
+  raster()
+kde_functionalwp_raster
+```
+
+```{r}
+kde_nonfunctionalwp_raster <- kde_Osun_nonfunctional.bw  %>%
+  as.SpatialGridDataFrame.im() %>%
+  raster()
+kde_nonfunctionalwp_raster
+```
+
+#### **Assign projection**
+
+```{r}
+projection(kde_functionalwp_raster) <- CRS('+init=EPSG:26392')
+projection(kde_nonfunctionalwp_raster) <- CRS('+init=EPSG:26392')
+kde_functionalwp_raster
+kde_nonfunctionalwp_raster
+```
+
+### Visualising the output in **tmap**
+
+```{r}
+tmap_mode('view')
+tm_basemap('OpenStreetMap') +
+tm_shape(kde_functionalwp_raster) +
+  tm_raster('v') + 
+  tm_layout(legend.position = c('right', 'bottom'), 
+            frame = FALSE)
+```
+
+```{r}
+tmap_mode('view')
+tm_basemap('OpenStreetMap') +
+tm_shape(kde_nonfunctionalwp_raster) +
+  tm_raster('v') + 
+  tm_layout(legend.position = c('right', 'bottom'), 
+            frame = FALSE)
+```
+
 #### 3.1.3 Describe the spatial patterns revealed by the kernel density maps. Highlight the advantage of kernel density map over point map.
 
 ```{r}
 tmap_mode("view")
-tm_shape(NGA_Osun) +
+tm_shape(NGA_Osun) + 
   tm_polygons() +
 tm_shape(wp_Osun)+ 
   tm_dots(col = "status_clean",
@@ -379,6 +424,61 @@ tm_shape(wp_Osun)+
              border.col = "black",
              border.lwd = 0.5) +
   tm_view(set.zoom.limits = c(8, 16))
+```
+
+It looks like the graph has too many colors and it will be better if we group them only in Functional, Nonfunctional, Unknown, so it will be clear to visualize
+
+```{r}
+wp_Osun <- wp_Osun %>%
+  mutate(status_group = recode(status_clean,
+                               "Functional" = "Functional",
+                               "Functional but not in use" = "Functional",
+                               "Functional but needs repair" = "Functional",
+                               "Abandoned/Decommissioned" = "Nonfunctional",
+                               "Abandoned" = "Nonfunctional",
+                               "Non-Functional due to dry season" = "Nonfunctional",
+                               "Non-Functional" = "Nonfunctional",
+                               "Non functional due to dry season" = "Nonfunctional",
+                               "unknown" = "Unknown"))
+```
+
+```{r}
+tmap_mode("view")
+tm_shape(NGA_Osun) + 
+  tm_polygons() +
+tm_shape(wp_Osun)+ 
+  tm_dots(col = "status_group",
+             size = 0.01,
+             border.col = "black",
+             border.lwd = 0.5) +
+  tm_view(set.zoom.limits = c(8, 16))
+```
+
+```{r}
+plot_functionalwp<- tm_shape(NGA_Osun) + 
+  tm_polygons() +
+tm_shape(wp_Osun_functional) + 
+  tm_dots(size = 0.01)
+plot_functionalwp
+```
+
+```{r}
+plot_nonfunctionalwp<- tm_shape(NGA_Osun) + 
+  tm_polygons() +
+tm_shape(wp_Osun_nonfunctional) + 
+  tm_dots(size = 0.01)
+plot_nonfunctionalwp
+```
+
+```{r}
+par(mfrow=c(1,2))
+plot_functionalwp
+plot_nonfunctionalwp
+```
+
+```{r}
+plot(kde_Osun_functional.bw, main = "Functional Waterpoint")
+plot(kde_Osun_nonfunctional.bw, main = "Nonfunctional Waterpoint")
 ```
 
 ### 3.2 Second-order Spatial Point Patterns Analysis
@@ -390,14 +490,49 @@ tm_shape(wp_Osun)+
 #### 3.2.3 With reference to the analysis results, draw statistical conclusions.
 
 ```{r}
-L_ck = Lest(wp_Osun_functional_ppp, correction = "Ripley")
-plot(L_ck, . -r ~ r, 
-     ylab= "L(d)-r", xlab = "d(m)")
+#to run this code, remove the'#'
+#L_ck = Lest(wp_Osun_functional_ppp, correction = "Ripley")
+#plot(L_ck, . -r ~ r, 
+     #ylab= "L(d)-r", xlab = "d(m)")
 ```
+
+![](graph%20used/L-function)
+
+```{r}
+#L_ck = Lest(wp_Osun_nonfunctional_ppp, correction = "Ripley")
+#plot(L_ck, . -r ~ r, 
+     #ylab= "L(d)-r", xlab = "d(m)")
+```
+
+![](graph%20used/nonfuntonl)
+
+```{r}
+#L_ck.csr <- envelope(wp_Osun_functional_ppp, Lest, nsim = 5, rank = 1, glocal=TRUE)
+```
+
+```{r}
+#plot(L_ck.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
+```
+
+![](graph%20used/HYPOFOR%20FUNCTIION%20_GRAPH2)
+
+```{r}
+#L_ck.csr <- envelope(wp_Osun_nonfunctional_ppp, Lest, nsim = 5, rank = 1, glocal=TRUE)
+```
+
+```{r}
+#plot(L_ck.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
+```
+
+![](graph%20used/hypo2_nonfunction)
 
 ### 3.3 Spatial Correlation Analysis
 
 #### 3.3.1 Formulate the null hypothesis and alternative hypothesis and select the confidence level.
+
+```{r}
+
+```
 
 #### 3.3.2 Perform the test by using appropriate Second order spatial point patterns analysis technique.
 
