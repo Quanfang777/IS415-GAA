@@ -73,7 +73,7 @@ wp_Osun <- read_csv("data/aspatial/WPdx.csv") %>%
   filter (`#clean_adm1` == "Osun") 
 ```
 
-##### 3.1.3 Mappng the geospatial data sets
+##### 3.1.3 Mapping the geospatial data sets
 
 ```{r}
 #Let's display the studyarea - Osun on the map:
@@ -460,37 +460,17 @@ tm_shape(wp_Osun)+
 ```
 
 ```{r}
-plot_functionalwp<- tm_shape(NGA_Osun) + 
-  tm_polygons() +
-tm_shape(wp_Osun_functional) + 
-  tm_dots(size = 0.01)
-plot_functionalwp
-```
-
-```{r}
-plot_nonfunctionalwp<- tm_shape(NGA_Osun) + 
-  tm_polygons() +
-tm_shape(wp_Osun_nonfunctional) + 
-  tm_dots(size = 0.01)
-plot_nonfunctionalwp
-```
-
-```{r}
-par(mfrow=c(1,2))
-plot_functionalwp
-plot_nonfunctionalwp
-```
-
-```{r}
 plot(kde_Osun_functional.bw, main = "Functional Waterpoint")
 plot(kde_Osun_nonfunctional.bw, main = "Nonfunctional Waterpoint")
 ```
 
-##### 3.2.14 Second-order Spatial Point Patterns Analysis
+### 3.3 Second-order Spatial Point Patterns Analysis
 
 L function is a tool used to analyze spatial point patterns. It is a summary statistic that provides information on the spatial distribution of points.The L function can be used to identify clustering or regularity in the distribution of points, as well as to assess the spatial randomness of the point pattern.
 
-Here is the code to perform L function
+Here is the code to
+
+##### 3.3.1 perform L function
 
 ```{r}
 #to run this code, remove the'#'
@@ -499,7 +479,7 @@ Here is the code to perform L function
      #ylab= "L(d)-r", xlab = "d(m)")
 ```
 
-![](images/L-function(1.1.png)
+![](images/L-function(1.1-01.png)
 
 ```{r}
 #L_ck = Lest(wp_Osun_nonfunctional_ppp, correction = "Ripley")
@@ -507,11 +487,25 @@ Here is the code to perform L function
      #ylab= "L(d)-r", xlab = "d(m)")
 ```
 
-![](images/L-function)1.2%20for%20non.png)
+![](images/L-function)1.2%20for%20non-02.png){width="536"}
+
+3.3.2 Performing Complete Spatial Randomness Test
+
+To confirm the observed spatial patterns above, a hypothesis test will be conducted. The hypothesis and test are as follows:
+
+Ho = The distribution of the functional/nonfunctional water point in Osun are randomly distributed.
+
+H1= The distribution of the functional/nonfunctional water point in Osun are not randomly distributed.
+
+The null hypothesis will be rejected if p-value if smaller than alpha value of 0.001.
+
+The code chunk below is used to perform the hypothesis testing.
 
 ```{r}
 #L_ck.csr <- envelope(wp_Osun_functional_ppp, Lest, nsim = 5, rank = 1, glocal=TRUE)
 ```
+
+![]()![](images/HYPOFOR%20FUNCTIION%20_GRAPH2-03.png)
 
 ```{r}
 #plot(L_ck.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
@@ -529,16 +523,18 @@ Here is the code to perform L function
 
 ![](images/hypo2_nonfunction.png)
 
-### 3.3 Spatial Correlation Analysis
+##### 3.3.2 Given analysis results, draw statistical conclusions
 
-#### 3.3.1 Formulate the null hypothesis and alternative hypothesis and select the confidence level.
+### 3.4 Spatial Correlation Analysis
 
-In the code chunk below, st_knn() of sfdep package is used to determine the k (i.e. 6) nearest neighbours for given point geometry.
+In the code chunk below, [`st_knn()`](https://sfdep.josiahparry.com/reference/st_knn.html) of sfdep package is used to determine the k (i.e. 6) nearest neighbours for given point geometry.
 
 ```{r}
 nb <- include_self(
   st_knn(st_geometry(wp_Osun), 6))
 ```
+
+In the code chunk below, [`st_kernel_weights()`](https://sfdep.josiahparry.com/reference/st_kernel_weights.html) of sfdep package is used to derive a weights list by using a kernel function.
 
 ```{r}
 wt <- st_kernel_weights(nb, 
@@ -552,17 +548,19 @@ To compute LCLQ by using sfdep package, the reference point data must be in eith
 ```{r}
 FunctionalWaterpoint <- wp_Osun %>%
 filter(status_group == "Functional")
-B <- FunctionalWaterpoint$status_group
+A<- FunctionalWaterpoint$status_group
 ```
 
 ```{r}
 NonFunctionalWaterpoint <- wp_Osun %>%
 filter(status_group == "Nonfunctional")
-A <- NonFunctionalWaterpoint$status_group
+B <- NonFunctionalWaterpoint$status_group
 ```
 
+In the code chunk below local_colocation() us used to compute the LCLQ values for each NonFunctional water point event.
+
 ```{r}
-LCLQ <- local_colocation(A, B, nb, wt, 49)
+LCLQ <- local_colocation(B, A, nb, wt, 49)
 
 ```
 
