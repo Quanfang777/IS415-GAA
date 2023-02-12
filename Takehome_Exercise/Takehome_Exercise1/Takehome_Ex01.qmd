@@ -479,7 +479,7 @@ Here is the code to
      #ylab= "L(d)-r", xlab = "d(m)")
 ```
 
-![](images/L-function(1.1-01.png)
+![](images/functional%201.PNG)
 
 ```{r}
 #L_ck = Lest(wp_Osun_nonfunctional_ppp, correction = "Ripley")
@@ -487,8 +487,7 @@ Here is the code to
      #ylab= "L(d)-r", xlab = "d(m)")
 ```
 
-![](images/L-function)1.2%20for%20non-02.png){width="536"}
-
+![](images/nonfunctoanal.PNG)
 3.3.2 Performing Complete Spatial Randomness Test
 
 To confirm the observed spatial patterns above, a hypothesis test will be conducted. The hypothesis and test are as follows:
@@ -505,13 +504,11 @@ The code chunk below is used to perform the hypothesis testing.
 #L_ck.csr <- envelope(wp_Osun_functional_ppp, Lest, nsim = 5, rank = 1, glocal=TRUE)
 ```
 
-![]()![](images/HYPOFOR%20FUNCTIION%20_GRAPH2-03.png)
-
 ```{r}
 #plot(L_ck.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
 ```
 
-![](images/HYPOFOR%20FUNCTIION%20_GRAPH2-01.png)
+![](images/HYPOFOR%20FUNCTIION%20_GRAPH2-04.png)
 
 ```{r}
 #L_ck.csr <- envelope(wp_Osun_nonfunctional_ppp, Lest, nsim = 5, rank = 1, glocal=TRUE)
@@ -522,6 +519,8 @@ The code chunk below is used to perform the hypothesis testing.
 ```
 
 ![](images/hypo2_nonfunction.png)
+
+![]()
 
 ##### 3.3.2 Given analysis results, draw statistical conclusions
 
@@ -564,7 +563,7 @@ LCLQ <- local_colocation(B, A, nb, wt, 49)
 
 ```
 
-### **Joining output table**
+**Joining output table**
 
 ```{r}
 LCLQ_waterpoint <- cbind(wp_Osun, LCLQ)
