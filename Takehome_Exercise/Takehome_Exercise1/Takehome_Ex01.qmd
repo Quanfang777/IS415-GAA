@@ -37,6 +37,8 @@ The package we used for analysis are:
 
 -   **funModeling**: used for exploratory data analysis
 
+-   **sfdep:** for performing geospatia data wrangling and local colocation quotient analysis.
+
 Let's load the package required!
 
 ```{r}
@@ -238,7 +240,7 @@ wp_Osun_nonfunctional_sp <- as(wp_Osun_nonfunctional, "SpatialPoints")
 NGA_Osun_sp<- as(NGA_Osun_sp, "SpatialPolygons")
 ```
 
-##### 3.2.3  Converting the generic sp format into spatstat's ppp format
+##### 3.2.3 Converting the generic sp format into spatstat's ppp format
 
 Now, we will use as.ppp() function of spatstat to convert the spatial data into spatstat's ppp object format, let's do it for both functional and non-function waterpoint data
 
@@ -370,7 +372,7 @@ plot(kde_Osun_nonfunctional.bw, main = "Fixed bandwidth")
 plot(wp_Osun_nonfunctional_adaptive, main = "Adaptive bandwidth")
 ```
 
-##### **3.2.10 Converting KDE output into grid object.** 
+##### **3.2.10 Converting KDE output into grid object.**
 
 We need to convert the KDE output so that it is suitable for mapping purposes
 
@@ -397,7 +399,9 @@ kde_functionalwp_raster
 kde_nonfunctionalwp_raster
 ```
 
-##### 3.2.12 Visualizing the output in **tmap**
+##### 3.2.12 Visualizing the output in **tmap Openstreet and describe the spatial patterns**
+
+The functional water point distribution
 
 ```{r}
 tmap_mode('view')
@@ -408,6 +412,8 @@ tm_shape(kde_functionalwp_raster) +
             frame = FALSE)
 ```
 
+The nonfunctional water point distribution
+
 ```{r}
 tmap_mode('view')
 tm_basemap('OpenStreetMap') +
@@ -416,6 +422,8 @@ tm_shape(kde_nonfunctionalwp_raster) +
   tm_layout(legend.position = c('right', 'bottom'), 
             frame = FALSE)
 ```
+
+From the graph we can clearly see that the nonfunctional waterpoints are centered in the central region area (IFE Central). When compare these two maps above (functional waterpoint distribution and non functional waterpoint distribution), we found the north part of Osun has more functional waterpoints than the south part of Osun
 
 ##### 3.1.13 Plot Point Map
 
@@ -464,6 +472,10 @@ plot(kde_Osun_functional.bw, main = "Functional Waterpoint")
 plot(kde_Osun_nonfunctional.bw, main = "Nonfunctional Waterpoint")
 ```
 
+**The advantage of kernel density map over point map**:
+
+Kernel density map can provide a more clear and accurate representation of the spatial data distribution. It provides a smooth representation of the underlying distribution and **make sure the visualization of areas with a high concentration of points is clear**, while point maps can be misleading because they may over-represent areas with many points and under-represent areas with fewer points. In our case, we can see when there are so many points on the graph, it is very hard to observe and interpret.
+
 ### 3.3 Second-order Spatial Point Patterns Analysis
 
 L function is a tool used to analyze spatial point patterns. It is a summary statistic that provides information on the spatial distribution of points.The L function can be used to identify clustering or regularity in the distribution of points, as well as to assess the spatial randomness of the point pattern.
@@ -487,7 +499,8 @@ Here is the code to
      #ylab= "L(d)-r", xlab = "d(m)")
 ```
 
-![](images/nonfunctoanal.PNG)
+##### ![](images/nonfunctoanal.PNG)
+
 3.3.2 Performing Complete Spatial Randomness Test
 
 To confirm the observed spatial patterns above, a hypothesis test will be conducted. The hypothesis and test are as follows:
@@ -499,6 +512,20 @@ H1= The distribution of the functional/nonfunctional water point in Osun are not
 The null hypothesis will be rejected if p-value if smaller than alpha value of 0.001.
 
 The code chunk below is used to perform the hypothesis testing.
+
+The L function is a variance-stabilising transformation of the K function:
+
+![](images/fomular.PNG)
+
+**Methodology and Interpretation**
+
+To assess the spatial point pattern, (L(r)−r) will be plotted against r
+
+At complete spatial randomness (CSR), L(r)−r=0
+
+L(r)--r\>0 implies clustering
+
+L(r)−r\<0 implies dispersion
 
 ```{r}
 #L_ck.csr <- envelope(wp_Osun_functional_ppp, Lest, nsim = 5, rank = 1, glocal=TRUE)
@@ -520,9 +547,9 @@ The code chunk below is used to perform the hypothesis testing.
 
 ![](images/hypo2_nonfunction.png)
 
-![]()
-
 ##### 3.3.2 Given analysis results, draw statistical conclusions
+
+The L(r)−r function for both functional and nonfunction water points in Osun (black line) lies above the L(r)−r function at CSR (red line), suggesting clustering, All of the observed L(r)−r values go above of the randomisation envelope, suggesting statistically significant clustering of both functional and nonfunction waterpoints in Osun
 
 ### 3.4 Spatial Correlation Analysis
 
@@ -533,7 +560,7 @@ nb <- include_self(
   st_knn(st_geometry(wp_Osun), 6))
 ```
 
-In the code chunk below, [`st_kernel_weights()`](https://sfdep.josiahparry.com/reference/st_kernel_weights.html) of sfdep package is used to derive a weights list by using a kernel function.
+[`st_kernel_weights()`](https://sfdep.josiahparry.com/reference/st_kernel_weights.html) of sfdep package is used to derive a weights list by using a kernel function.
 
 ```{r}
 wt <- st_kernel_weights(nb, 
@@ -556,7 +583,7 @@ filter(status_group == "Nonfunctional")
 B <- NonFunctionalWaterpoint$status_group
 ```
 
-In the code chunk below local_colocation() us used to compute the LCLQ values for each NonFunctional water point event.
+local_colocation() us used to compute the LCLQ values for each **NonFunctional** water point event.
 
 ```{r}
 LCLQ <- local_colocation(B, A, nb, wt, 49)
@@ -575,9 +602,11 @@ tmap_mode("view")
 tm_shape(NGA_Osun) +
   tm_polygons() +
 tm_shape(LCLQ_waterpoint)+ 
-  tm_dots(col = "Functional",
+  tm_dots(col = "p_sim_Functional",
              size = 0.01,
              border.col = "black",
              border.lwd = 0.5) +
   tm_view(set.zoom.limits = c(8, 16))
 ```
+
+From the graph, the water point with p-value is small (less than 0.05) is highlighted in color, for the above code, we use non-functional waterpoint as our Category of Interest, the point highlighted in yellow color means that the actual co-location quotient for those nonfunctional water points is statistically significant. Those non-functional water point are surrounded with functional water points and should be carefully examined
