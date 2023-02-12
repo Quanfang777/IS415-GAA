@@ -474,7 +474,7 @@ plot(kde_Osun_nonfunctional.bw, main = "Nonfunctional Waterpoint")
 
 **The advantage of kernel density map over point map**:
 
-Kernel density map can provide a more clear and accurate representation of the spatial data distribution. It provides a smooth representation of the underlying distribution and **make sure the visualization of areas with a high concentration of points is clear**, while point maps can be misleading because they may over-represent areas with many points and under-represent areas with fewer points. In our case, we can see when there are so many points on the graph, it is very hard to observe and interpret.
+Kernel density map can provide us with a clear representation of the spatial data distribution. It provides a smooth representation of the underlying distribution and **make sure the visualization of areas with a high concentration of points is clear**, while point maps can be misleading because they may over-represent areas with many points and under-represent areas with fewer points. In our case, we can see when there are so many points on the graph of point map, it is very hard to observe and interpret.
 
 ### 3.3 Second-order Spatial Point Patterns Analysis
 
@@ -549,7 +549,7 @@ L(r)−r\<0 implies dispersion
 
 ##### 3.3.2 Given analysis results, draw statistical conclusions
 
-The L(r)−r function for both functional and nonfunction water points in Osun (black line) lies above the L(r)−r function at CSR (red line), suggesting clustering, All of the observed L(r)−r values go above of the randomisation envelope, suggesting statistically significant clustering of both functional and nonfunction waterpoints in Osun
+The L(r)−r function for both functional and nonfunctional water points in Osun (black line) lies above the L(r)−r function at CSR (red line), suggesting clustering. Meanwhile, all of the observed L(r)−r values go above of the randomisation envelope, suggesting statistically significant clustering of both functional and nonfunctional waterpoints in Osun
 
 ### 3.4 Spatial Correlation Analysis
 
