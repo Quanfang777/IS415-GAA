@@ -128,9 +128,9 @@ Let's if the crs has been assigned properly!
 st_crs(wp_Osun)
 ```
 
-#### 3.1.2 **Geospatial Data Cleaning**
+##### 3.1.5 **Geospatial Data Cleaning**
 
-##### 3.1.2.2 Checking for duplicate name
+##### Checking for duplicate name
 
 It is always important for us to check for duplicate name in the data main data fields. Here are the steps of properly handling the duplication
 
@@ -155,7 +155,7 @@ NGA_Osun$ADM2_EN[duplicated(NGA_Osun$ADM2_EN)==TRUE]
 
 Great, let's moving on
 
-**3.1.2.3 Data Wrangling for Water Point Data**
+##### **3.1.6 Data Wrangling for Water Point Data**
 
 Let's have a quick understanding of our water point data
 
@@ -181,7 +181,7 @@ wp_Osun <- wp_Osun  %>%
     status_clean, "unknown"))
 ```
 
-#### Extracting Water Point Data and combine them into 3 meaningful classes
+##### 3.1.7 Extracting Water Point Data and combine them into 3 meaningful classes
 
 Now, let's extract the water point data in Osun state according to their status.
 
@@ -214,9 +214,11 @@ wp_Osun_unknown <- wp_Osun %>%
   filter(status_clean == "unknown")
 ```
 
-#### 3.1.2Display the kernel density maps on openstreetmap of Osub State, Nigeria.
+### 3.2 Display the kernel density maps on openstreetmap of Osub State, Nigeria.
 
 For displaying the kernel density maps, many geospatial analysis packages required need the input geospatial data to be in sp's Spatial\* classes, so we need to convert simple feature data frame to sp's Spatial\* class.
+
+##### 3.2.1 convert simple feature data frame to sp's Spatial\* class.
 
 ```{r}
 wp_Osun_functional <- as_Spatial(wp_Osun_functional)
@@ -224,7 +226,7 @@ wp_Osun_nonfunctional<- as_Spatial(wp_Osun_nonfunctional)
 NGA_Osun_sp <- as_Spatial(NGA_Osun)
 ```
 
-#### **Converting the Spatial\* class into generic sp format**
+##### **3.2.2 Converting the Spatial\* class into generic sp format**
 
 For further analysis, we need **spatstat** which requires the analytical data in ***ppp*** object form. There is no direct way to convert a Spatial\* classes into ***ppp*** object. We need to convert the ***Spatial*** **classes**\* into ***Spatial*** object first.
 
@@ -236,7 +238,7 @@ wp_Osun_nonfunctional_sp <- as(wp_Osun_nonfunctional, "SpatialPoints")
 NGA_Osun_sp<- as(NGA_Osun_sp, "SpatialPolygons")
 ```
 
-#### Converting the generic sp format into spatstat's ppp format
+##### 3.2.3  Converting the generic sp format into spatstat's ppp format
 
 Now, we will use as.ppp() function of spatstat to convert the spatial data into spatstat's ppp object format, let's do it for both functional and non-function waterpoint data
 
@@ -251,7 +253,7 @@ wp_Osun_nonfunctional_ppp <- as(wp_Osun_nonfunctional, "ppp")
 wp_Osun_nonfunctional_ppp
 ```
 
-### Handling duplicated points
+##### 3.2.4 Handling duplicated points
 
 It is always important to check if there are duplicated points!
 
@@ -265,7 +267,7 @@ any(duplicated(wp_Osun_nonfunctional_ppp))
 
 There is no duplication point, let's moving on!
 
-### Creating ***owin*** object
+##### 3.2.5 Creating ***owin*** object
 
 When analysing spatial point patterns, it will be good to confine the analysis with a geographical area, in this case, let's confine the analysis within Osun boundary. In spatstat, an object called owin is specially designed to represent this polygonal region.
 
@@ -277,7 +279,7 @@ Osun_owin <- as(NGA_Osun_sp, "owin")
 plot(Osun_owin)
 ```
 
-### Combining point events object and owin object
+##### 3.2.6 Combining point events object and owin object
 
 Now, let's combine both the point and polygon feature in ppp object class
 
@@ -286,7 +288,7 @@ wp_Osun_functional_ppp = wp_Osun_functional_ppp[Osun_owin]
 wp_Osun_nonfunctional_ppp = wp_Osun_nonfunctional_ppp[Osun_owin]
 ```
 
-## First-order Spatial Point Patterns Analysis
+##### 3.2.7 Start First-order Spatial Point Patterns Analysis
 
 Let's compute the Kernel Density map for both functional waterpoint and nonfunctional waterpoint in Osun
 
@@ -312,7 +314,9 @@ plot(kde_Osun_functional_bw)
 
 The density values of the output range from 0 to 0.00002 which is way too small to comprehend. This is because the default unit of measurement is in meter. As a result, the density values computed is in "number of points per square meter". so, let's rescale our KDE values
 
-**Rescaling KDE values** Let's convert the unit of measurement from meter to kilometer.
+##### **3.2.8 Rescaling KDE values**
+
+Let's convert the unit of measurement from meter to kilometer.
 
 ```{r}
 wp_Osun_functional_ppp.km <- rescale(wp_Osun_functional_ppp, 1000, "km")
@@ -350,7 +354,7 @@ plot(wp_Osun_nonfunctional_adaptive)
 
 We can compare the fixed and adaptive kernel density estimation outputs by using the code chunk below.
 
-Function waterpoint distribution in fixed and adaptive kernel density estimation outputs
+##### 3.2.9 Function waterpoint distribution in fixed and adaptive kernel density estimation outputs
 
 ```{r}
 par(mfrow=c(1,2))
@@ -366,7 +370,9 @@ plot(kde_Osun_nonfunctional.bw, main = "Fixed bandwidth")
 plot(wp_Osun_nonfunctional_adaptive, main = "Adaptive bandwidth")
 ```
 
-**Converting KDE output into grid object.** We need to convert the KDE output so that it is suitable for mapping purposes
+##### **3.2.10 Converting KDE output into grid object.** 
+
+We need to convert the KDE output so that it is suitable for mapping purposes
 
 ```{r}
 kde_functionalwp_raster <- kde_Osun_functional.bw  %>%
@@ -382,7 +388,7 @@ kde_nonfunctionalwp_raster <- kde_Osun_nonfunctional.bw  %>%
 kde_nonfunctionalwp_raster
 ```
 
-#### **Assign projection**
+##### **3.2.11 Assign projection**
 
 ```{r}
 projection(kde_functionalwp_raster) <- CRS('+init=EPSG:26392')
@@ -391,7 +397,7 @@ kde_functionalwp_raster
 kde_nonfunctionalwp_raster
 ```
 
-### Visualising the output in **tmap**
+##### 3.2.12 Visualizing the output in **tmap**
 
 ```{r}
 tmap_mode('view')
@@ -411,7 +417,7 @@ tm_shape(kde_nonfunctionalwp_raster) +
             frame = FALSE)
 ```
 
-#### 3.1.3 Describe the spatial patterns revealed by the kernel density maps. Highlight the advantage of kernel density map over point map.
+##### 3.1.13 Plot Point Map
 
 ```{r}
 tmap_mode("view")
@@ -480,13 +486,11 @@ plot(kde_Osun_functional.bw, main = "Functional Waterpoint")
 plot(kde_Osun_nonfunctional.bw, main = "Nonfunctional Waterpoint")
 ```
 
-### 3.2 Second-order Spatial Point Patterns Analysis
+##### 3.2.14 Second-order Spatial Point Patterns Analysis
 
-#### 3.2.1 Formulate the null hypothesis and alternative hypothesis and select the confidence level.
+L function is a tool used to analyze spatial point patterns. It is a summary statistic that provides information on the spatial distribution of points.The L function can be used to identify clustering or regularity in the distribution of points, as well as to assess the spatial randomness of the point pattern.
 
-#### 3.2.2 Perform the test by using appropriate Second order spatial point patterns analysis technique.
-
-#### 3.2.3 With reference to the analysis results, draw statistical conclusions.
+Here is the code to perform L function
 
 ```{r}
 #to run this code, remove the'#'
@@ -495,7 +499,7 @@ plot(kde_Osun_nonfunctional.bw, main = "Nonfunctional Waterpoint")
      #ylab= "L(d)-r", xlab = "d(m)")
 ```
 
-![](graph%20used/L-function)
+![](images/L-function(1.1.png)
 
 ```{r}
 #L_ck = Lest(wp_Osun_nonfunctional_ppp, correction = "Ripley")
@@ -503,7 +507,7 @@ plot(kde_Osun_nonfunctional.bw, main = "Nonfunctional Waterpoint")
      #ylab= "L(d)-r", xlab = "d(m)")
 ```
 
-![](graph%20used/nonfuntonl)
+![](images/L-function)1.2%20for%20non.png)
 
 ```{r}
 #L_ck.csr <- envelope(wp_Osun_functional_ppp, Lest, nsim = 5, rank = 1, glocal=TRUE)
@@ -513,7 +517,7 @@ plot(kde_Osun_nonfunctional.bw, main = "Nonfunctional Waterpoint")
 #plot(L_ck.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
 ```
 
-![](graph%20used/HYPOFOR%20FUNCTIION%20_GRAPH2)
+![](images/HYPOFOR%20FUNCTIION%20_GRAPH2-01.png)
 
 ```{r}
 #L_ck.csr <- envelope(wp_Osun_nonfunctional_ppp, Lest, nsim = 5, rank = 1, glocal=TRUE)
@@ -523,7 +527,7 @@ plot(kde_Osun_nonfunctional.bw, main = "Nonfunctional Waterpoint")
 #plot(L_ck.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
 ```
 
-![](graph%20used/hypo2_nonfunction)
+![](images/hypo2_nonfunction.png)
 
 ### 3.3 Spatial Correlation Analysis
 
@@ -559,7 +563,7 @@ A <- NonFunctionalWaterpoint$status_group
 
 ```{r}
 LCLQ <- local_colocation(A, B, nb, wt, 49)
-LCLQ
+
 ```
 
 ### **Joining output table**
