@@ -29,9 +29,10 @@ website:
             href: "WeeklyExercise/week6/InClass_Ex06/InClass_Ex06.html"    
       - text: "Takehome Exercise"
         menu: 
-          - text: "Takehome_Exercise"
+          - text: "Takehome_Exercise1"
             href: "Takehome_Exercise/Takehome_Exercise1/Takehome_Ex01.html"
-
+          - text: "Takehome_Exercise2"
+            href: "Takehome_Exercise/Takehome_Exercise2/Takehome_Ex02.html"
 
 format:
   html:

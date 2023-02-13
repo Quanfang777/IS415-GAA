@@ -25,17 +25,31 @@ hunan2012 <- read_csv("data/aspatial/Hunan_2012.csv")
 #### Performing relational join
 
 ```{r}
-hunan <- left_join(hunan,hunan2012)%>%
+#SF dataframe + tb dataframe
+hunan_GDPPC <- left_join(hunan,hunan2012)%>%
   select(1:4, 7, 15)
+#need to specify the joined field if the case different, R is very sensitive to uppercase/lowercase, need to make sure the column value are standardize
 ```
 
-```{r}
-basemap <- tm_shape(hunan) +
-  tm_polygons() +
-  tm_text("NAME_3", size=0.5)
+**Plotting a Choropleth map**
 
-gdppc <- qtm(hunan, "GDPPC")
-tmap_arrange(basemap, gdppc, asp=1, ncol=2)
+```{r}
+tmap_mode("plot")
+tm_shape(hunan_GDPPC)+
+  tm_fill("GDPPC", 
+          style = "quantile", 
+          palette = "Blues",
+          title = "Dependency ratio") +
+  tm_layout(main.title = "Distribution of GDPPC by district",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.35, 
+            legend.width = 0.25,
+            frame = TRUE) +
+  tm_borders(alpha = 0.4) +
+  tm_compass(type="8star", size = 1) +
+  tm_scale_bar() +
+  tm_grid(alpha =0.2)
 ```
 
 #### Computing Contiguity Spatial Weights
