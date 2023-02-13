@@ -1,0 +1,41 @@
+---
+title: "InClass_Ex06"
+editor: visual
+---
+
+#### Import shapefile into r environment
+
+```{r}
+pacman::p_load(sf, sfdep, tmap, tidyverse, knitr)
+```
+
+#### Import shapefile into r environment
+
+```{r}
+hunan <- st_read(dsn = "data/geospatial", 
+                 layer = "Hunan")
+```
+
+#### Import csv file into r environment
+
+```{r}
+hunan2012 <- read_csv("data/aspatial/Hunan_2012.csv")
+```
+
+#### Performing relational join
+
+```{r}
+hunan <- left_join(hunan,hunan2012)%>%
+  select(1:4, 7, 15)
+```
+
+```{r}
+basemap <- tm_shape(hunan) +
+  tm_polygons() +
+  tm_text("NAME_3", size=0.5)
+
+gdppc <- qtm(hunan, "GDPPC")
+tmap_arrange(basemap, gdppc, asp=1, ncol=2)
+```
+
+#### Computing Contiguity Spatial Weights

@@ -22,7 +22,9 @@ website:
           - text: "In-Class Exercise 4"
             href: "WeeklyExercise/week4/InClass_Ex04/InClass_Ex04.html"           
           - text: "In-Class Exercise 5"
-            href: "WeeklyExercise/week5/InClass_Ex05/InClass_Ex05.html"                
+            href: "WeeklyExercise/week5/InClass_Ex05/InClass_Ex05.html" 
+          - text: "In-Class Exercise 6"
+            href: "WeeklyExercise/week6/InClass_Ex06/InClass_Ex06.html"    
       - text: "Takehome Exercise"
         menu: 
           - text: "Takehome_Exercise"
