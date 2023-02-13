@@ -39,7 +39,7 @@ tm_shape(hunan_GDPPC)+
   tm_fill("GDPPC", 
           style = "quantile", 
           palette = "Blues",
-          title = "Dependency ratio") +
+          title = "GDP per district") +
   tm_layout(main.title = "Distribution of GDPPC by district",
             main.title.position = "center",
             main.title.size = 1.2,
@@ -52,4 +52,18 @@ tm_shape(hunan_GDPPC)+
   tm_grid(alpha =0.2)
 ```
 
-#### Computing Contiguity Spatial Weights
+#### Computing Contiguity neighbours method
+
+```{r}
+cn_queen <- hunan_GDPPC %>% mutate(nb=st_contiguity(geometry),.before = 1)
+```
+
+```{r}
+cn_roook <- hunan_GDPPC %>% mutate(nb=st_contiguity(geometry),queen=FALSE, .before = 1)
+```
+
+**Computing Contiguity Spatial Weights**
+
+```{r}
+wm_q <- hunan_GDPPC %>% mutate(nb=st_contiguity(geometry),wt = st_weights(nb), .before = 1)
+```
