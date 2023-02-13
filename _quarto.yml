@@ -13,6 +13,8 @@ website:
             href: "WeeklyExercise/week3/Week3_handon.html"   
           - text: "Hand-on Exercise4"
             href: "WeeklyExercise/week4/Hands-on_Ex04/Handon_Ex04.html"  
+          - text: "Hand-on Exercise6"
+            href: "WeeklyExercise/week6/Hands-on_Ex06/Handon_Ex06.html"  
       - text: "In-class Exercise"
         menu: 
           - text: "In-Class Exercise 2"
