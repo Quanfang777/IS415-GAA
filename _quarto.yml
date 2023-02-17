@@ -14,7 +14,11 @@ website:
           - text: "Hand-on Exercise4"
             href: "WeeklyExercise/week4/Hands-on_Ex04/Handon_Ex04.html"  
           - text: "Hand-on Exercise6"
+            href: "WeeklyExercise/week5/Hands-on_Ex05/Handon_Ex05.html"
+          - text: "Hand-on Exercise6"
             href: "WeeklyExercise/week6/Hands-on_Ex06/Handon_Ex06.html"  
+          - text: "Hand-on Exercise7"
+            href: "WeeklyExercise/week7/Hands-on_Ex07/Handon_Ex07.html"  
       - text: "In-class Exercise"
         menu: 
           - text: "In-Class Exercise 2"
