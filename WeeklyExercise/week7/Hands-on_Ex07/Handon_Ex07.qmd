@@ -40,6 +40,7 @@ pacman::p_load(sf, spdep, tmap, tidyverse)
 ```
 
 ### 
+
 Getting the Data Into R Environment
 
 ```{r}
@@ -87,8 +88,7 @@ Learn how to compute global spatial autocorrelation statistics and to perform sp
 
 Before we can compute the global spatial autocorrelation statistics, we need to construct a spatial weights of the study area. The spatial weights is used to define the neighbourhood relationships between the geographical units (i.e. county) in the study area.
 
-
-In the code chunk below, [*poly2nb()*](https://r-spatial.github.io/spdep/reference/poly2nb.html) of **spdep** package is used to compute contiguity weight matrices for the study area. This function builds a neighbours list based on regions with contiguous boundaries. If you look at the documentation you will see that you can pass a \"queen\" argument that takes TRUE or FALSE as options. If you do not specify this argument the default is set to TRUE, that is, if you don\'t specify queen = FALSE this function will return a list of first order neighbours using the Queen criteria.
+In the code chunk below, [*poly2nb()*](https://r-spatial.github.io/spdep/reference/poly2nb.html) of **spdep** package is used to compute contiguity weight matrices for the study area. This function builds a neighbours list based on regions with contiguous boundaries. If you look at the documentation you will see that you can pass a "queen" argument that takes TRUE or FALSE as options. If you do not specify this argument the default is set to TRUE, that is, if you don't specify queen = FALSE this function will return a list of first order neighbours using the Queen criteria.
 
 ```{r}
 wm_q <- poly2nb(hunan, 
@@ -107,7 +107,7 @@ rswm_q <- nb2listw(wm_q,
 rswm_q
 ```
 
-### Global Spatial Autocorrelation: Moran\'s I
+### Global Spatial Autocorrelation: Moran's I
 
 The code chunk below performs Moran's I statistical testing using moran.test() of spdep.
 
@@ -118,7 +118,7 @@ moran.test(hunan$GDPPC,
            na.action=na.omit)
 ```
 
-Computing Monte Carlo Moran\'s I
+Computing Monte Carlo Moran's I
 
 ```{r}
 set.seed(1234)
@@ -130,7 +130,7 @@ bperm= moran.mc(hunan$GDPPC,
 bperm
 ```
 
-#### Visualising Monte Carlo Moran\'s I
+#### Visualising Monte Carlo Moran's I
 
 ```{r}
 hist(bperm$res, 
@@ -141,15 +141,15 @@ abline(v=0,
        col="red")
 ```
 
-### Global Spatial Autocorrelation: Geary\'s
+### Global Spatial Autocorrelation: Geary's
 
-Learn how to perform Geary\'s c statistics testing by using appropriate functions of **spdep** package
+Learn how to perform Geary's c statistics testing by using appropriate functions of **spdep** package
 
 ```{r}
 geary.test(hunan$GDPPC, listw=rswm_q)
 ```
 
-### Computing Monte Carlo Geary\'s C
+### Computing Monte Carlo Geary's C
 
 ```{r}
 set.seed(1234)
@@ -159,7 +159,7 @@ bperm=geary.mc(hunan$GDPPC,
 bperm
 ```
 
-### Visualising the Monte Carlo Geary\'s C
+### Visualising the Monte Carlo Geary's C
 
 ```{r}
 hist(bperm$res, freq=TRUE, breaks=20, xlab="Simulated Geary c")
@@ -168,7 +168,7 @@ abline(v=1, col="red")
 
 ### Spatial Correlogram
 
-Spatial correlograms are great to examine patterns of spatial autocorrelation in your data or model residuals. They show how correlated are pairs of spatial observations when you increase the distance (lag) between them - they are plots of some index of autocorrelation (Moran\'s I or Geary\'s c) against distance.Although correlograms are not as fundamental as variograms (a keystone concept of geostatistics), they are very useful as an exploratory and descriptive tool. For this purpose they actually provide richer information than variograms.
+Spatial correlograms are great to examine patterns of spatial autocorrelation in your data or model residuals. They show how correlated are pairs of spatial observations when you increase the distance (lag) between them - they are plots of some index of autocorrelation (Moran's I or Geary's c) against distance.Although correlograms are not as fundamental as variograms (a keystone concept of geostatistics), they are very useful as an exploratory and descriptive tool. For this purpose they actually provide richer information than variograms.
 
 **Compute Moran's I correlogram**
 
@@ -185,7 +185,7 @@ plot(MI_corr)
 print(MI_corr)
 ```
 
-### Compute Geary\'s C correlogram and plot
+### Compute Geary's C correlogram and plot
 
 In the code chunk below, sp.correlogram() of spdep package is used to compute a 6-lag spatial correlogram of GDPPC. The global spatial autocorrelation used in Geary's C. The plot() of base Graph is then used to plot the output.
 
@@ -206,10 +206,9 @@ print(GC_corr)
 
 Local Indicators of Spatial Association or LISA are statistics that evaluate the existence of clusters in the spatial arrangement of a given variable. For instance if we are studying cancer rates among census tracts in a given city local clusters in the rates mean that there are areas that have higher or lower rates than is to be expected by chance alone; that is, the values occurring are above or below those of a random distribution in space.
 
-In this section will illustrate how to apply appropriate Local Indicators for Spatial Association (LISA), especially local Moran\'I to detect cluster and/or outlier from GDP per capita 2012 of Hunan Province, PRC.
+In this section will illustrate how to apply appropriate Local Indicators for Spatial Association (LISA), especially local Moran'I to detect cluster and/or outlier from GDP per capita 2012 of Hunan Province, PRC.
 
-**Computing local Moran's I**
-To compute local Moran's I, the localmoran() function of spdep will be used. It computes Ii values, given a set of zi values and a listw object providing neighbour weighting information for the polygon associated with the zi values.
+**Computing local Moran's I** To compute local Moran's I, the localmoran() function of spdep will be used. It computes Ii values, given a set of zi values and a listw object providing neighbour weighting information for the polygon associated with the zi values.
 
 The code chunks below are used to compute local Moran's I of GDPPC2012 at the county level.
 
@@ -247,7 +246,7 @@ hunan.localMI <- cbind(hunan,localMI) %>%
   rename(Pr.Ii = Pr.z....E.Ii..)
 ```
 
-**Mapping local Moran\'s I values**
+**Mapping local Moran's I values**
 
 ```{r}
 tm_shape(hunan.localMI) +
@@ -258,11 +257,11 @@ tm_shape(hunan.localMI) +
   tm_borders(alpha = 0.5)
 ```
 
-### Mapping local Moran\'s I p-values
+### Mapping local Moran's I p-values
 
 The choropleth shows there is evidence for both positive and negative Ii values. However, it is useful to consider the p-values for each of these values, as consider above.
 
-The code chunks below produce a choropleth map of Moran\'s I p-values by using functions of **tmap** package.
+The code chunks below produce a choropleth map of Moran's I p-values by using functions of **tmap** package.
 
 ```{r}
 tm_shape(hunan.localMI) +
@@ -273,9 +272,9 @@ tm_shape(hunan.localMI) +
   tm_borders(alpha = 0.5)
 ```
 
-#### Mapping both local Moran\'s I values and p-values
+#### Mapping both local Moran's I values and p-values
 
-For effective interpretation, it is better to plot both the local Moran\'s I values map and its corresponding p-values map next to each other.
+For effective interpretation, it is better to plot both the local Moran's I values map and its corresponding p-values map next to each other.
 
 The code chunk below will be used to create such visualisation.
 
@@ -316,7 +315,6 @@ nci <- moran.plot(hunan$GDPPC, rswm_q,
 Notice that the plot is split in 4 quadrants. The top right corner belongs to areas that have high GDPPC and are surrounded by other areas that have the average level of GDPPC. This are the high-high locations in the lesson slide.
 
 **Plotting Moran scatterplot with standardised variable**
-
 
 First we will use [*scale()*](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/scale) to centers and scales the variable. Here centering is done by subtracting the mean (omitting NAs) the corresponding columns, and scaling is done by dividing the (centered) variable by their standard deviations.
 
@@ -394,9 +392,9 @@ tmap_arrange(gdppc, LISAmap,
 
 Beside detecting cluster and outliers, localised spatial statistics can be also used to detect hot spot and/or cold spot areas.
 
-The term \'hot spot\' has been used generically across disciplines to describe a region or value that is higher relative to its surroundings (Lepers et al 2005, Aben et al 2012, Isobe et al 2015).
+The term 'hot spot' has been used generically across disciplines to describe a region or value that is higher relative to its surroundings (Lepers et al 2005, Aben et al 2012, Isobe et al 2015).
 
-###  Getis and Ord\'s G-Statistics
+### Getis and Ord's G-Statistics
 
 An alternative spatial statistics to detect spatial anomalies is the Getis and Ord's G-statistics (Getis and Ord, 1972; Ord and Getis, 1995). It looks at neighbours within a defined proximity to identify where either high or low values clutser spatially. Here, statistically significant hot-spots are recognised as areas of high values where other areas within a neighbourhood range also share high values too.
 
@@ -418,7 +416,7 @@ There are two type of distance-based proximity matrix, they are:
 
 -   adaptive distance weight matrix.
 
-####  Deriving the centroid
+#### Deriving the centroid
 
 ```{r}
 longitude <- map_dbl(hunan$geometry, ~st_centroid(.x)[[1]])
@@ -484,7 +482,7 @@ knn_lw <- nb2listw(knn, style = 'B')
 summary(knn_lw)
 ```
 
-##  Computing Gi statistics
+## Computing Gi statistics
 
 ```{r}
 fips <- order(hunan$County)

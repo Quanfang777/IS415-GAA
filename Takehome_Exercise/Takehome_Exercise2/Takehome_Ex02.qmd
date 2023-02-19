@@ -2,3 +2,52 @@
 title: "Takehome_Ex02"
 editor: visual
 ---
+
+# Take-home Exercise 2: Spatio-temporal Analysis of COVID-19 Vaccination Trends at the Sub-district Level, DKI Jakarta
+
+## Background 
+
+Since late December 2019, an outbreak of a novel coronavirus disease (COVID-19; previously known as 2019-nCoV) was reported in Wuhan, China, which had subsequently affected 210 countries worldwide. In general, COVID-19 is an acute resolved disease but it can also be deadly, with a 2% case fatality rate.
+
+The COVID-19 vaccination in Indonesia is an ongoing mass immunisation in response to the COVID-19 pandemic in Indonesia. On 13 January 2021, the program commenced when President Joko Widodo was vaccinated at the presidential palace. In terms of total doses given, Indonesia ranks third in Asia and fifth in the world.
+
+According to wikipedia, as of 5 February 2023 at 18:00 WIB (UTC+7), 204,266,655 people had received the first dose of the vaccine and 175,131,893 people had been fully vaccinated; 69,597,474 of them had been inoculated with the booster or the third dose, while 1,585,164 had received the fourth dose. Jakarta has the highest percentage of population fully vaccinated with 103.46%, followed by Bali and Special Region of Yogyakarta with 85.45% and 83.02% respectively.
+
+Despite its compactness, the cumulative vaccination rate are not evenly distributed within DKI Jakarta. The question is where are the sub-districts with relatively higher number of vaccination rate and how they changed over time.
+
+## **Objective** 
+
+-   Apply appropriate Local Indicators of Spatial Association (LISA) and Emerging Hot Spot Analysis (EHSA) to undercover the spatio-temporal trends of COVID-19 vaccination in DKI Jakarta.
+
+-   Reveal the spatio-temporal patterns of COVID-19 cases in the DKI Jakarta province on a sub-district level
+
+-   Examine sub-districts that have a higher value of confirmed cases and deaths relative to other sub-districts
+
+## Data Preparation 
+
+### Package Used
+
+```{r}
+pacman::p_load(sf, spdep, tmap, tidyverse, knitr)
+```
+
+### Dataset Used
+
+```{r}
+datasets <- data.frame(
+  Type=c("Geospatial",
+         "Aspatial"),
+  Name=c("[Batas Desa Provinsi DKI Jakarta](https://www.indonesia-geospasial.com/2020/04/download-shapefile-shp-batas-desa.html)",
+         "[Standar Kelurahan Data Corona (Monthly)](https://riwayat-file-covid-19-dki-jakarta-jakartagis.hub.arcgis.com/)"),
+  Format=c("Shapefile", 
+           ".xlsx"),
+  Description=c("Sub-districts in DKI Jakarta",
+                "Sub-district level data of daily COVID-19 cases in DKI Jakarta  
+                between March 2020~July 2021")
+  )
+
+library(knitr)
+library(kableExtra)
+kable(head(datasets), caption="Datasets Used") %>%
+  kable_material("hover", latex_options="scale_down")
+```
