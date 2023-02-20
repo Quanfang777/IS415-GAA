@@ -239,6 +239,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <ul class="collapse">
   <li><a href="#package-used" id="toc-package-used" class="nav-link" data-scroll-target="#package-used">Package Used</a></li>
   <li><a href="#dataset-used" id="toc-dataset-used" class="nav-link" data-scroll-target="#dataset-used">Dataset Used</a></li>
+  <li><a href="#import-geospatial-data" id="toc-import-geospatial-data" class="nav-link" data-scroll-target="#import-geospatial-data">Import Geospatial Data</a></li>
+  <li><a href="#check-invalid-geometries-and-missing-values" id="toc-check-invalid-geometries-and-missing-values" class="nav-link" data-scroll-target="#check-invalid-geometries-and-missing-values">Check Invalid Geometries and Missing Values</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -347,8 +349,45 @@ Attaching package: 'kableExtra'</code></pre>
 
 </div>
 </div>
+</section>
+<section id="import-geospatial-data" class="level3">
+<h3 class="anchored" data-anchor-id="import-geospatial-data">Import Geospatial Data</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>jakarta <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn=</span><span class="st">"data/geospatial"</span>,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">layer=</span><span class="st">"BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA' from data source 
+  `C:\Quanfang777\IS415-GAA\Takehome_Exercise\Takehome_Exercise2\data\geospatial' 
+  using driver `ESRI Shapefile'
+Simple feature collection with 269 features and 161 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 106.3831 ymin: -6.370815 xmax: 106.9728 ymax: -5.184322
+Geodetic CRS:  WGS 84</code></pre>
+</div>
+</div>
+<p>From the data we learnt that the CRS is in WGS 84, but we should change it to the one align to the CRS of JAKARTA</p>
+</section>
+<section id="check-invalid-geometries-and-missing-values" class="level3">
+<h3 class="anchored" data-anchor-id="check-invalid-geometries-and-missing-values">Check Invalid Geometries and Missing Values</h3>
+<section id="invalid-geometries" class="level4">
+<h4 class="anchored" data-anchor-id="invalid-geometries">Invalid Geometries</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">which</span>(<span class="fu">st_is_valid</span>(jakarta) <span class="sc">==</span> <span class="cn">FALSE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<p>There are no invalid geometries.</p>
+</section>
+<section id="missing-values" class="level4">
+<h4 class="anchored" data-anchor-id="missing-values">Missing Values</h4>
+<div class="cell">
+
+</div>
 
 
+</section>
 </section>
 </section>
 </section>

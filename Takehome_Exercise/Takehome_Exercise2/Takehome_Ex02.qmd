@@ -5,7 +5,7 @@ editor: visual
 
 # Take-home Exercise 2: Spatio-temporal Analysis of COVID-19 Vaccination Trends at the Sub-district Level, DKI Jakarta
 
-## Background 
+## Background
 
 Since late December 2019, an outbreak of a novel coronavirus disease (COVID-19; previously known as 2019-nCoV) was reported in Wuhan, China, which had subsequently affected 210 countries worldwide. In general, COVID-19 is an acute resolved disease but it can also be deadly, with a 2% case fatality rate.
 
@@ -15,7 +15,7 @@ According to wikipedia, as of 5 February 2023 at 18:00 WIB (UTC+7), 204,266,655 
 
 Despite its compactness, the cumulative vaccination rate are not evenly distributed within DKI Jakarta. The question is where are the sub-districts with relatively higher number of vaccination rate and how they changed over time.
 
-## **Objective** 
+## **Objective**
 
 -   Apply appropriate Local Indicators of Spatial Association (LISA) and Emerging Hot Spot Analysis (EHSA) to undercover the spatio-temporal trends of COVID-19 vaccination in DKI Jakarta.
 
@@ -23,7 +23,7 @@ Despite its compactness, the cumulative vaccination rate are not evenly distribu
 
 -   Examine sub-districts that have a higher value of confirmed cases and deaths relative to other sub-districts
 
-## Data Preparation 
+## Data Preparation
 
 ### Package Used
 
@@ -50,4 +50,29 @@ library(knitr)
 library(kableExtra)
 kable(head(datasets), caption="Datasets Used") %>%
   kable_material("hover", latex_options="scale_down")
+```
+
+### Import Geospatial Data
+
+```{r}
+jakarta <- st_read(dsn="data/geospatial",
+                      layer="BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA")
+```
+
+From the data we learnt that the CRS is in WGS 84, but we should change it to the one align to the CRS of JAKARTA
+
+### Check Invalid Geometries and Missing Values
+
+#### Invalid Geometries
+
+```{r}
+length(which(st_is_valid(jakarta) == FALSE))
+```
+
+There are no invalid geometries.
+
+#### Missing Values
+
+```{r}
+
 ```
