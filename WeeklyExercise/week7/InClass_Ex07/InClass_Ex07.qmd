@@ -11,7 +11,7 @@ Launching the packages into R environment
 pacman::p_load(sf, sfdep, tmap, tidyverse,plotly)
 ```
 
-####  Import shapefile into r environment
+#### Import shapefile into r environment
 
 ```{r}
 hunan <- st_read(dsn = "data/geospatial", 
