@@ -28,7 +28,7 @@ Despite its compactness, the cumulative vaccination rate are not evenly distribu
 ### Package Used
 
 ```{r}
-pacman::p_load(sf, spdep, tmap, tidyverse, knitr,readxl)
+pacman::p_load(sf, spdep, tmap, tidyverse, knitr,readxl,dplyr)
 ```
 
 ### Dataset Used
@@ -117,47 +117,72 @@ basemap <- tm_shape(jakarta) +
 basemap
 ```
 
+Import and Clean Aspatial Data
+
+For proper and meaningful data analysis, we always need to examine the necessary column to keep and remove the unnecessary ones to improve the performance as well as computing efficiency
+
+Let's take a look at our original datasets by importing one of our aspatial data
+
 ```{r}
-aspatial_preprocess <- function(filepath){
-  # the .name_repair="minimal" is to indicate not to replace duplicate column names with 'NAME...n' like we saw above!
-  # reference: https://readxl.tidyverse.org/articles/articles/column-names.html
-  result_file <- read_xlsx(filepath, .name_repair="minimal")
-  
-  # Remove Duplicate Columns
-  # essentially, it's saying "take the columns that aren't duplicated, and if there are duplicates, take the last duplicate"
-  # we use fromLast = TRUE to ensure that we keep the last duplicated column
-  # reference: https://www.marsja.se/how-to-remove-duplicates-in-r-rows-columns-dplyr/
-  # reference: https://stackoverflow.com/questions/16905425/find-duplicate-values-in-r
-  result_file <- result_file[, !duplicated(colnames(result_file), fromLast = TRUE)] 
-  
-  # Create the Date Column
-  # the format of our files is: Standar Kelurahan Data Corona (DD Month YYYY Pukul Ti.me)
-  # while the start is technically "(", "(" is part of a regular expression and leads to a warning message, so we'll use "Corona" instead. The [[1]] refers to the first element in the list.
-  # we're loading it as DD-Month-YYYY format
-  # the end is 1 space before "Pukul", which means we have to -2 spaces (one for P, one for space)
-  # as such, the most relevant functions are substr (returns a substring) and either str_locate (returns location of substring as an integer matrix) or gregexpr (returns a list of locations of substring)
-  # reference https://stackoverflow.com/questions/14249562/find-the-location-of-a-character-in-string
-  startpoint <- gregexpr(pattern="Corona", filepath)[[1]] + 8
-  endpoint <- gregexpr(pattern="Pukul", filepath)[[1]] - 2
-  result_file$Date <- substr(filepath, startpoint, endpoint)
-  
-  # Retain the Relevant Columns
-  result_file <- result_file %>% 
-    select("Date", 
-           "ID_KEL", 
-           "Nama_provinsi", 
-           "nama_kota", 
-           "nama_kecamatan", 
-           "nama_kelurahan", 
-           "POSITIF", 
-           "Meninggal")
-  return(result_file)
+Aug2022 <- read_xlsx("data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Agustus 2022).xlsx")
+
+```
+
+view the whole excel file to understand the data
+
+```{r}
+view(Aug2022)
+```
+
+![![](images/paste-145E0758.png){width="185"}](images/paste-6286AE74.png){width="315"}
+
+The necessary columns needed are shown as below: (other than the fields the excel file already contained, we also need a column called Date, which our original excel file not contained but necessary for us to include to analyze the spatio-temporal trends of COVID-19 vaccination in DKI Jakarta.
+
+| Index | Original Name  | Translated Name            |
+|-------|----------------|----------------------------|
+| 1     | ID             | ID                         |
+| 2     | Name_provinsi  | Province                   |
+| 3     | name_kota      | City                       |
+| 4     | nama_kecamatan | District                   |
+| 5     | nama_kelurahan | Sub-District               |
+| 6     | Meninggal      | Cumulative Death Cases     |
+| 7     | POSITIF        | Cumulative Confirmed Cases |
+| 8     | Date           | Date                       |
+
+Now, let's prepare our aspatial data
+
+```{r}
+# Set the path to the folder where the Excel files are stored
+folder_path <- "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial"
+```
+
+```{r}
+#Get a list of all the Excel files in the folder
+file_list <- list.files(folder_path, pattern = "*.xlsx", full.names = TRUE) 
+```
+
+```{r}
+file_list
+```
+
+```{r}
+
+# Create an empty dataframe to store the combined data
+combined_data <- data.frame()
+
+# Loop through each file in the list, read the data, and append it to the combined data
+for (file in file_list) {
+  sheet_name <- "Data Kelurahan" # Modify this to match the name of the sheet you want to read
+  data <- read_excel(file, sheet ="Data Kelurahan")
+  combined_data <- bind_rows(combined_data, data)
 }
 ```
 
 ```{r}
-fileslist <-list.files(path = "data/aspatial", pattern = "*.xlsx", full.names=TRUE)
+combined_data <- combined_data %>%
+  select(1:6)
+```
 
-# afterwards, for every element in fileslist, apply aspatial_process function
-dflist <- lapply(seq_along(fileslist), function(x) aspatial_preprocess(fileslist[x]))
+```{r}
+ view(combined_data )
 ```
