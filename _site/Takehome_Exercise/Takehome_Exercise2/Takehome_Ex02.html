@@ -286,7 +286,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="package-used" class="level3">
 <h3 class="anchored" data-anchor-id="package-used">Package Used</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, spdep, tmap, tidyverse, knitr,readxl,dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, spdep, tmap, tidyverse, knitr,readxl,dplyr,lubridate,stringr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="dataset-used" class="level3">
@@ -453,38 +453,59 @@ Projected CRS: DGN95 / Indonesia TM-3 zone 54.1
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>jakarta <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(jakarta,<span class="fu">c</span>(<span class="st">"DESA_KELUR"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Rename the column in Engligh</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>jakarta <span class="ot">&lt;-</span> <span class="fu">filter</span>(jakarta, KAB_KOTA <span class="sc">!=</span> <span class="st">"KEPULAUAN SERIBU"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="visualize-the-geographic-data" class="level4">
 <h4 class="anchored" data-anchor-id="visualize-the-geographic-data">Visualize the geographic data</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>basemap <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(jakarta) <span class="sc">+</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>()</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>basemap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>basemap <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(jakarta) <span class="sc">+</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>()</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>basemap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="Takehome_Ex02_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+<p><img src="Takehome_Ex02_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>we found that there are some outer island that are not relevant to our analysis, so let’s remove them and keep the mainland only</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>jakarta <span class="ot">&lt;-</span> <span class="fu">filter</span>(jakarta, KAB_KOTA <span class="sc">!=</span> <span class="st">"KEPULAUAN SERIBU"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>jakarta <span class="ot">&lt;-</span> <span class="fu">filter</span>(jakarta, KAB_KOTA <span class="sc">!=</span> <span class="st">"KEPULAUAN SERIBU"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>basemap <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(jakarta) <span class="sc">+</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>()</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>basemap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>basemap <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(jakarta) <span class="sc">+</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>()</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>basemap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="Takehome_Ex02_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+<p><img src="Takehome_Ex02_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
 </div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>jakarta <span class="ot">&lt;-</span> <span class="fu">filter</span>(jakarta, KAB_KOTA <span class="sc">!=</span> <span class="st">"KEPULAUAN SERIBU"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>jakarta <span class="ot">&lt;-</span>jakarta <span class="sc">%&gt;%</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">Object_ID=</span>OBJECT_ID,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Province=</span>PROVINSI, </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">City=</span>KAB_KOTA, </span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">District=</span>KECAMATAN, </span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Village_Code=</span>KODE_DESA, </span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Village=</span>DESA, </span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">Sub_District=</span>DESA_KELUR,</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">Code=</span>KODE, </span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">Total_Population=</span>JUMLAH_PEN</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Import and Clean Aspatial Data</p>
 <p>For proper and meaningful data analysis, we always need to examine the necessary column to keep and remove the unnecessary ones to improve the performance as well as computing efficiency</p>
 <p>Let’s take a look at our original datasets by importing one of our aspatial data</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>Aug2022 <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Agustus 2022).xlsx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>Aug2022 <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 August 2022).xlsx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>view the whole excel file to understand the data</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">view</span>(Aug2022)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">view</span>(Aug2022)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -546,46 +567,136 @@ Projected CRS: DGN95 / Indonesia TM-3 zone 54.1
 </table>
 <p>Now, let’s prepare our aspatial data</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the path to the folder where the Excel files are stored</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>folder_path <span class="ot">&lt;-</span> <span class="st">"C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the path to the folder where the Excel files are stored</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>folder_path <span class="ot">&lt;-</span> <span class="st">"C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Get a list of all the Excel files in the folder</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>file_list <span class="ot">&lt;-</span> <span class="fu">list.files</span>(folder_path, <span class="at">pattern =</span> <span class="st">"*.xlsx"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Get a list of all the Excel files in the folder</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>file_list <span class="ot">&lt;-</span> <span class="fu">list.files</span>(folder_path, <span class="at">pattern =</span> <span class="st">"*.xlsx"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>file_list</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>file_list</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Agustus 2022).xlsx"  
- [2] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Desember 2021).xlsx" 
- [3] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Juli 2021).xlsx"     
- [4] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Juni 2022).xlsx"     
- [5] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Mei 2022).xlsx"      
- [6] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 November 2021).xlsx" 
- [7] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Oktober 2021).xlsx"  
- [8] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 September 2021).xlsx"
- [9] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 September 2022).xlsx"
-[10] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (02 Maret 2022).xlsx"    
-[11] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (1 Agustus 2021).xlsx"   </code></pre>
+<pre><code> [1] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 August 2021).xlsx"   
+ [2] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 August 2022).xlsx"   
+ [3] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 December 2021).xlsx" 
+ [4] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 July 2021).xlsx"     
+ [5] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 June 2022).xlsx"     
+ [6] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 May 2022).xlsx"      
+ [7] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 November 2021).xlsx" 
+ [8] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 October 2021).xlsx"  
+ [9] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 September 2021).xlsx"
+[10] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 September 2022).xlsx"
+[11] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (02 March 2022).xlsx"    </code></pre>
+</div>
+</div>
+<p>Use lubridate to convert date data : please refer to this <a href="https://www.statology.org/lubridate-convert-character-to-date/#:~:text=You%20can%20use%20various%20functions,day%2Dyear%20format%20to%20date">website</a></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an empty dataframe to store the combined data</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>vaccination_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop through each file in the list, read the data, and append it to the combined data</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (file <span class="cf">in</span> file_list) {</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  sheet_name <span class="ot">&lt;-</span> <span class="st">"Data Kelurahan"</span> <span class="co"># Modify this to match the name of the sheet you want to read</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  date <span class="ot">&lt;-</span> <span class="fu">dmy</span>(<span class="fu">str_extract</span>(file, <span class="st">"</span><span class="sc">\\</span><span class="st">d{2} [[:alpha:]]+ </span><span class="sc">\\</span><span class="st">d{4}"</span>))</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(file, <span class="at">sheet =</span><span class="st">"Data Kelurahan"</span>)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  data<span class="sc">$</span>date <span class="ot">&lt;-</span> date</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>   vaccination_data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>( vaccination_data, data)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a> vaccination_data <span class="ot">&lt;-</span>  vaccination_data <span class="sc">%&gt;%</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="dv">28</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">view</span>(vaccination_data )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>vaccination_data <span class="ot">&lt;-</span> vaccination_data <span class="sc">%&gt;%</span> </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">Family_Code =</span> <span class="st">"KODE KELURAHAN"</span>,</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">City =</span> <span class="st">"WILAYAH KOTA"</span>,</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">District=</span>KECAMATAN, </span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Sub_District=</span> KELURAHAN,</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Target=</span>SASARAN, </span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Yet_to_be_Vaccinated=</span><span class="st">"BELUM VAKSIN"</span>,</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Remove the missing value</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>vaccination_data[<span class="fu">rowSums</span>(<span class="fu">is.na</span>(vaccination_data))<span class="sc">!=</span><span class="dv">0</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Family_Code City District Sub_District  Target Yet_to_be_Vaccinated
+1           &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              4399496
+269         &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1405214
+537         &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1718787
+805         &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 7739060              5041111
+1073        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1444901
+1341        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1455001
+1609        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1875655
+1877        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              2221074
+2145        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              3259430
+2413        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1384555
+2681        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1516200
+           date
+1    2021-08-01
+269  2022-08-01
+537  2021-12-01
+805  2021-07-01
+1073 2022-06-01
+1341 2022-05-01
+1609 2021-11-01
+1877 2021-10-01
+2145 2021-09-01
+2413 2022-09-01
+2681 2022-03-02</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an empty dataframe to store the combined data</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop through each file in the list, read the data, and append it to the combined data</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (file <span class="cf">in</span> file_list) {</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  sheet_name <span class="ot">&lt;-</span> <span class="st">"Data Kelurahan"</span> <span class="co"># Modify this to match the name of the sheet you want to read</span></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(file, <span class="at">sheet =</span><span class="st">"Data Kelurahan"</span>)</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  combined_data <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(combined_data, data)</span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>vaccination_data <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(vaccination_data,<span class="fu">c</span>(<span class="st">"Family_code"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Join the data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(jakarta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Object_ID"        "Village_Code"     "Village"          "Code"            
+ [5] "Province"         "City"             "District"         "Sub_District"    
+ [9] "Total_Population" "geometry"        </code></pre>
+</div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">&lt;-</span> combined_data <span class="sc">%&gt;%</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(vaccination_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Family_Code"          "City"                 "District"            
+[4] "Sub_District"         "Target"               "Yet_to_be_Vaccinated"
+[7] "date"                </code></pre>
+</div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">view</span>(combined_data )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>combined_jakarta <span class="ot">&lt;-</span> <span class="fu">left_join</span>(jakarta, vaccination_data,</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">by=</span><span class="fu">c</span>(</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Sub_District"</span><span class="ot">=</span><span class="st">"Sub_District"</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                              )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">view</span>(combined_jakarta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># maps the Cases and Deaths side-by-side</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>target_cases <span class="ot">=</span> <span class="fu">tm_shape</span>(combined_jakarta)<span class="sc">+</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"Target"</span>) <span class="sc">+</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title=</span><span class="st">"Target"</span>)</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>yet_to_be_vac <span class="ot">=</span> <span class="fu">tm_shape</span>(combined_jakarta)<span class="sc">+</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"Yet_to_be_Vaccinated"</span>) <span class="sc">+</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title=</span><span class="st">"Yet_to_be_Vaccinated"</span>)</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(target_cases, yet_to_be_vac)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Takehome_Ex02_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
+</div>
 </div>
 
 

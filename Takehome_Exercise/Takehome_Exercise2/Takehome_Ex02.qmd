@@ -28,7 +28,7 @@ Despite its compactness, the cumulative vaccination rate are not evenly distribu
 ### Package Used
 
 ```{r}
-pacman::p_load(sf, spdep, tmap, tidyverse, knitr,readxl,dplyr)
+pacman::p_load(sf, spdep, tmap, tidyverse, knitr,readxl,dplyr,lubridate,stringr)
 ```
 
 ### Dataset Used
@@ -97,6 +97,12 @@ we could observe that the row with id 243,244 are the rows with missing values, 
 jakarta <- na.omit(jakarta,c("DESA_KELUR"))
 ```
 
+Rename the column in Engligh
+
+```{r}
+jakarta <- filter(jakarta, KAB_KOTA != "KEPULAUAN SERIBU")
+```
+
 #### Visualize the geographic data
 
 ```{r}
@@ -117,6 +123,25 @@ basemap <- tm_shape(jakarta) +
 basemap
 ```
 
+```{r}
+jakarta <- filter(jakarta, KAB_KOTA != "KEPULAUAN SERIBU")
+```
+
+```{r}
+jakarta <-jakarta %>% 
+  dplyr::rename(
+    Object_ID=OBJECT_ID,
+    Province=PROVINSI, 
+    City=KAB_KOTA, 
+    District=KECAMATAN, 
+    Village_Code=KODE_DESA, 
+    Village=DESA, 
+    Sub_District=DESA_KELUR,
+    Code=KODE, 
+    Total_Population=JUMLAH_PEN
+    )
+```
+
 Import and Clean Aspatial Data
 
 For proper and meaningful data analysis, we always need to examine the necessary column to keep and remove the unnecessary ones to improve the performance as well as computing efficiency
@@ -124,8 +149,7 @@ For proper and meaningful data analysis, we always need to examine the necessary
 Let's take a look at our original datasets by importing one of our aspatial data
 
 ```{r}
-Aug2022 <- read_xlsx("data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 Agustus 2022).xlsx")
-
+Aug2022 <- read_xlsx("data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 August 2022).xlsx")
 ```
 
 view the whole excel file to understand the data
@@ -165,24 +189,86 @@ file_list <- list.files(folder_path, pattern = "*.xlsx", full.names = TRUE)
 file_list
 ```
 
+Use lubridate to convert date data : please refer to this [website](https://www.statology.org/lubridate-convert-character-to-date/#:~:text=You%20can%20use%20various%20functions,day%2Dyear%20format%20to%20date)
+
 ```{r}
 
 # Create an empty dataframe to store the combined data
-combined_data <- data.frame()
+vaccination_data <- data.frame()
 
 # Loop through each file in the list, read the data, and append it to the combined data
 for (file in file_list) {
   sheet_name <- "Data Kelurahan" # Modify this to match the name of the sheet you want to read
+  date <- dmy(str_extract(file, "\\d{2} [[:alpha:]]+ \\d{4}"))
   data <- read_excel(file, sheet ="Data Kelurahan")
-  combined_data <- bind_rows(combined_data, data)
+  data$date <- date
+   vaccination_data <- bind_rows( vaccination_data, data)
 }
 ```
 
 ```{r}
-combined_data <- combined_data %>%
-  select(1:6)
+ vaccination_data <-  vaccination_data %>%
+  select(1:6, 28)
 ```
 
 ```{r}
- view(combined_data )
+ view(vaccination_data )
+```
+
+```{r}
+vaccination_data <- vaccination_data %>% 
+  dplyr::rename(
+    Family_Code = "KODE KELURAHAN",
+    City = "WILAYAH KOTA",
+    District=KECAMATAN, 
+    Sub_District= KELURAHAN,
+    Target=SASARAN, 
+    Yet_to_be_Vaccinated="BELUM VAKSIN",
+    )
+```
+
+Remove the missing value
+
+```{r}
+vaccination_data[rowSums(is.na(vaccination_data))!=0,]
+```
+
+```{r}
+vaccination_data <- na.omit(vaccination_data,c("Family_code"))
+```
+
+Join the data
+
+```{r}
+colnames(jakarta)
+```
+
+```{r}
+colnames(vaccination_data)
+```
+
+```{r}
+combined_jakarta <- left_join(jakarta, vaccination_data,
+                              by=c(
+                                "Sub_District"="Sub_District")
+                              )
+```
+
+```{r}
+view(combined_jakarta)
+```
+
+```{r}
+# maps the Cases and Deaths side-by-side
+target_cases = tm_shape(combined_jakarta)+
+  tm_fill("Target") +
+  tm_borders(alpha = 0.5) +
+  tm_layout(main.title="Target")
+
+yet_to_be_vac = tm_shape(combined_jakarta)+
+  tm_fill("Yet_to_be_Vaccinated") +
+  tm_borders(alpha = 0.5) +
+  tm_layout(main.title="Yet_to_be_Vaccinated")
+
+tmap_arrange(target_cases, yet_to_be_vac)
 ```
