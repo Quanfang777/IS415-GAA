@@ -97,12 +97,6 @@ we could observe that the row with id 243,244 are the rows with missing values, 
 jakarta <- na.omit(jakarta,c("DESA_KELUR"))
 ```
 
-Rename the column in Engligh
-
-```{r}
-jakarta <- filter(jakarta, KAB_KOTA != "KEPULAUAN SERIBU")
-```
-
 #### Visualize the geographic data
 
 ```{r}
@@ -111,20 +105,16 @@ basemap <- tm_shape(jakarta) +
 basemap
 ```
 
-we found that there are some outer island that are not relevant to our analysis, so let's remove them and keep the mainland only
-
 ```{r}
 jakarta <- filter(jakarta, KAB_KOTA != "KEPULAUAN SERIBU")
 ```
+
+we found that there are some outer island that are not relevant to our analysis, so let's remove them and keep the mainland only
 
 ```{r}
 basemap <- tm_shape(jakarta) +
   tm_polygons()
 basemap
-```
-
-```{r}
-jakarta <- filter(jakarta, KAB_KOTA != "KEPULAUAN SERIBU")
 ```
 
 ```{r}
@@ -259,7 +249,67 @@ view(combined_jakarta)
 ```
 
 ```{r}
-# maps the Cases and Deaths side-by-side
+
+target_cases = tm_shape(combined_jakarta)+
+  tm_fill("Target") +
+  tm_borders(alpha = 0.5) +
+  tm_layout(main.title="Target")
+
+yet_to_be_vac = tm_shape(combined_jakarta)+
+  tm_fill("Yet_to_be_Vaccinated") +
+  tm_borders(alpha = 0.5) +
+  tm_layout(main.title="Yet_to_be_Vaccinated")
+
+tmap_arrange(target_cases, yet_to_be_vac)
+
+```
+
+However, it seems that there are still some missing value.
+
+```{r}
+vaccination_subdistrict <- c(vaccination_data$Sub_District)
+jakata_subdistrict <- c(jakarta$Sub_District)
+
+unique(vaccination_subdistrict[!(vaccination_subdistrict %in% jakata_subdistrict)])
+```
+
+```{r}
+unique(jakata_subdistrict[!(jakata_subdistrict %in% vaccination_subdistrict)])
+```
+
+```{r}
+jakarta$Sub_District[jakarta$Sub_District == 'KRENDANG'] <- 'KERENDANG'
+jakarta$Sub_District[jakarta$Sub_District == 'RAWA JATI'] <- 'RAWAJATI'
+jakarta$Sub_District[jakarta$Sub_District == 'KAMPUNG TENGAH'] <- 'TENGAH'
+jakarta$Sub_District[jakarta$Sub_District == 'BALE KAMBANG'] <- 'BALEKAMBANG'
+jakarta$Sub_District[jakarta$Sub_District == 'PINANG RANTI'] <- 'PINANGRANTI'
+jakarta$Sub_District[jakarta$Sub_District == 'JATI PULO'] <- 'JATIPULO'
+jakarta$Sub_District[jakarta$Sub_District == 'PAL MERIAM'] <- 'PALMERIAM'
+jakarta$Sub_District[jakarta$Sub_District == 'KRAMAT JATI'] <- 'KRAMATJATI'
+jakarta$Sub_District[jakarta$Sub_District == 'HALIM PERDANA KUSUMAH'] <- 'HALIM PERDANA KUSUMA'
+jakarta$Sub_District[jakarta$Sub_District == 'KALI BARU'] <- 'KALIBARU'
+```
+
+```{r}
+jakarta$Sub_District[jakarta$Sub_District == 'BALEKAMBANG'] <- 'BALE KAMBANG'
+jakarta$Sub_District[jakarta$Sub_District == 'HALIM PERDANA KUSUMA'] <- 'HALIM PERDANA KUSUMAH'
+jakarta$Sub_District[jakarta$Sub_District == 'JATIPULO'] <- 'JATI PULO'
+jakarta$Sub_District[jakarta$Sub_District == 'TENGAH'] <- 'KAMPUNG TENGAH'
+jakarta$Sub_District[jakarta$Sub_District == 'KRAMATJATI'] <- 'KRAMAT JATI'
+jakarta$Sub_District[jakarta$Sub_District == 'KRENDANG'] <- 'KERENDANG'
+jakarta$Sub_District[jakarta$Sub_District == 'PALMERIAM'] <- 'PAL MERIAM'
+jakarta$Sub_District[jakarta$Sub_District == 'PINANGRANTI'] <- 'PINANG RANTI'
+jakarta$Sub_District[jakarta$Sub_District == 'RAWAJATI'] <- 'RAWA JATI'
+```
+
+```{r}
+combined_jakarta <- left_join(jakarta, vaccination_data,
+                              by=c(
+                                "Sub_District"="Sub_District")
+                              )
+```
+
+```{r}
 target_cases = tm_shape(combined_jakarta)+
   tm_fill("Target") +
   tm_borders(alpha = 0.5) +
