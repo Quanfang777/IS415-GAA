@@ -494,7 +494,7 @@ Projected CRS: DGN95 / Indonesia TM-3 zone 54.1
 <p>For proper and meaningful data analysis, we always need to examine the necessary column to keep and remove the unnecessary ones to improve the performance as well as computing efficiency</p>
 <p>Let’s take a look at our original datasets by importing one of our aspatial data</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>Aug2022 <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 August 2022).xlsx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>Aug2022 <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 August 2021).xlsx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>view the whole excel file to understand the data</p>
 <div class="cell">
@@ -570,17 +570,18 @@ Projected CRS: DGN95 / Indonesia TM-3 zone 54.1
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>file_list</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 August 2021).xlsx"   
- [2] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 August 2022).xlsx"   
+<pre><code> [1] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 April 2022).xlsx"    
+ [2] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 August 2021).xlsx"   
  [3] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 December 2021).xlsx" 
- [4] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 July 2021).xlsx"     
- [5] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 June 2022).xlsx"     
- [6] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 May 2022).xlsx"      
- [7] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 November 2021).xlsx" 
- [8] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 October 2021).xlsx"  
- [9] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 September 2021).xlsx"
-[10] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 September 2022).xlsx"
-[11] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (02 March 2022).xlsx"    </code></pre>
+ [4] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 February 2022).xlsx" 
+ [5] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 January 2022).xlsx"  
+ [6] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 July 2021).xlsx"     
+ [7] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 June 2022).xlsx"     
+ [8] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 May 2022).xlsx"      
+ [9] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 November 2021).xlsx" 
+[10] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 October 2021).xlsx"  
+[11] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 September 2021).xlsx"
+[12] "C:/Quanfang777/IS415-GAA/Takehome_Exercise/Takehome_Exercise2/data/aspatial/Data Vaksinasi Berbasis Kelurahan (02 March 2022).xlsx"    </code></pre>
 </div>
 </div>
 <p>Use lubridate to convert date data : please refer to this <a href="https://www.statology.org/lubridate-convert-character-to-date/#:~:text=You%20can%20use%20various%20functions,day%2Dyear%20format%20to%20date">website</a></p>
@@ -599,7 +600,7 @@ Projected CRS: DGN95 / Indonesia TM-3 zone 54.1
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a> vaccination_data <span class="ot">&lt;-</span>  vaccination_data <span class="sc">%&gt;%</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="dv">28</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="st">"date"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">view</span>(vaccination_data )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -620,29 +621,31 @@ Projected CRS: DGN95 / Indonesia TM-3 zone 54.1
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>vaccination_data[<span class="fu">rowSums</span>(<span class="fu">is.na</span>(vaccination_data))<span class="sc">!=</span><span class="dv">0</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     Family_Code City District Sub_District  Target Yet_to_be_Vaccinated
-1           &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              4399496
-269         &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1405214
+1           &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1481006
+269         &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              4399496
 537         &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1718787
-805         &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 7739060              5041111
-1073        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1444901
-1341        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1455001
-1609        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1875655
-1877        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              2221074
-2145        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              3259430
-2413        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1384555
-2681        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1516200
+805         &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1536737
+1073        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1620250
+1341        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 7739060              5041111
+1609        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1444901
+1877        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1455001
+2145        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1875655
+2413        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              2221074
+2681        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              3259430
+2949        &lt;NA&gt; &lt;NA&gt;     &lt;NA&gt;        TOTAL 8941211              1516200
            date
-1    2021-08-01
-269  2022-08-01
+1    2022-04-01
+269  2021-08-01
 537  2021-12-01
-805  2021-07-01
-1073 2022-06-01
-1341 2022-05-01
-1609 2021-11-01
-1877 2021-10-01
-2145 2021-09-01
-2413 2022-09-01
-2681 2022-03-02</code></pre>
+805  2022-02-01
+1073 2022-01-01
+1341 2021-07-01
+1609 2022-06-01
+1877 2022-05-01
+2145 2021-11-01
+2413 2021-10-01
+2681 2021-09-01
+2949 2022-03-02</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -755,6 +758,105 @@ Projected CRS: DGN95 / Indonesia TM-3 zone 54.1
 <span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(target_cases, yet_to_be_vac)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="Takehome_Ex02_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><strong>Calculate Monthly Vaccination Rate</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>combined_jakarta<span class="sc">$</span>Monthly_Vacinnation_Rate <span class="ot">&lt;-</span> (combined_jakarta<span class="sc">$</span>Target <span class="sc">-</span> combined_jakarta<span class="sc">$</span>Yet_to_be_Vaccinated) <span class="sc">/</span> combined_jakarta<span class="sc">$</span>Target</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>vaccination_data<span class="sc">$</span>date <span class="ot">&lt;-</span> <span class="fu">as.character</span>(vaccination_data<span class="sc">$</span>date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>cases_rate <span class="ot">&lt;-</span> vaccination_data <span class="sc">%&gt;%</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(jakarta, <span class="at">by=</span><span class="fu">c</span>(<span class="st">"Sub_District"</span> <span class="ot">=</span> <span class="st">"Sub_District"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Sub_District, date) <span class="sc">%&gt;%</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="st">`</span><span class="at">Monthly_Vac_R</span><span class="st">`</span> <span class="ot">=</span> ((Target<span class="sc">-</span>Yet_to_be_Vaccinated)<span class="sc">/</span>Target)) <span class="sc">%&gt;%</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> date,</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">values_from =</span> Monthly_Vac_R)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'Sub_District'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+</div>
+<p><strong>Monthly Vaccination Rate Mapping</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>combined_jakarta <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(combined_jakarta)</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="co"># need to join our previous dataframes with the geospatial data to ensure that geometry column is present</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>cases_rate <span class="ot">&lt;-</span> cases_rate<span class="sc">%&gt;%</span> <span class="fu">left_join</span>(jakarta, <span class="at">by=</span><span class="fu">c</span>(<span class="st">"Sub_District"</span><span class="ot">=</span><span class="st">"Sub_District"</span>))</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>cases_rate <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(cases_rate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>jenks_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(df, varname) {</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(jakarta) <span class="sc">+</span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_polygons</span>() <span class="sc">+</span></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(df) <span class="sc">+</span></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_fill</span>(varname, </span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">n=</span> <span class="dv">6</span>,</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"jenks"</span>, </span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">title =</span> <span class="st">"Case Rate"</span>) <span class="sc">+</span></span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_layout</span>(<span class="at">main.title =</span> varname,</span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">main.title.size =</span> <span class="fl">1.2</span>,</span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.width =</span> <span class="fl">0.35</span>,</span>
+<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a>          <span class="at">frame =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>)</span>
+<span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(cases_rate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 261
+Columns: 22
+$ Sub_District     &lt;chr&gt; "ANCOL", "ANGKE", "BALE KAMBANG", "BALI MESTER", "BAM…
+$ `2021-07-01`     &lt;dbl&gt; 0.3491884, 0.3609851, 0.2507751, 0.3385927, 0.3233046…
+$ `2021-08-01`     &lt;dbl&gt; 0.4924208, 0.5327933, 0.3731169, 0.4886177, 0.4781815…
+$ `2021-09-01`     &lt;dbl&gt; 0.6184073, 0.6478336, 0.5716104, 0.6217186, 0.6442838…
+$ `2021-10-01`     &lt;dbl&gt; 0.7224287, 0.7427249, 0.7021394, 0.7440525, 0.7696405…
+$ `2021-11-01`     &lt;dbl&gt; 0.7509083, 0.7774752, 0.7399395, 0.7828138, 0.8097014…
+$ `2021-12-01`     &lt;dbl&gt; 0.7697415, 0.7968755, 0.7668363, 0.8035275, 0.8251474…
+$ `2022-01-01`     &lt;dbl&gt; 0.7891594, 0.8088561, 0.7826236, 0.8174733, 0.8338216…
+$ `2022-02-01`     &lt;dbl&gt; 0.8062388, 0.8167183, 0.7950746, 0.8283429, 0.8449686…
+$ `2022-03-02`     &lt;dbl&gt; 0.8083267, 0.8191008, 0.7971727, 0.8309065, 0.8467187…
+$ `2022-04-01`     &lt;dbl&gt; 0.8113334, 0.8236615, 0.8014033, 0.8338802, 0.8500666…
+$ `2022-05-01`     &lt;dbl&gt; 0.8139224, 0.8262142, 0.8037078, 0.8360336, 0.8531482…
+$ `2022-06-01`     &lt;dbl&gt; 0.8145906, 0.8269970, 0.8049460, 0.8371616, 0.8545178…
+$ Object_ID        &lt;dbl&gt; 25455, 25486, 25605, 25595, 25642, 25531, 25609, 2560…
+$ Village_Code     &lt;chr&gt; "3172051003", "3173041007", "3175041005", "3175031003…
+$ Village          &lt;chr&gt; "ANCOL", "ANGKE", "BALEKAMBANG", "BALI MESTER", "BAMB…
+$ Code             &lt;dbl&gt; 317205, 317304, 317504, 317503, 317510, 317403, 31750…
+$ Province         &lt;chr&gt; "DKI JAKARTA", "DKI JAKARTA", "DKI JAKARTA", "DKI JAK…
+$ City             &lt;chr&gt; "JAKARTA UTARA", "JAKARTA BARAT", "JAKARTA TIMUR", "J…
+$ District         &lt;chr&gt; "PADEMANGAN", "TAMBORA", "KRAMATJATI", "JATINEGARA", …
+$ Total_Population &lt;dbl&gt; 29886, 36428, 35376, 11695, 31774, 26261, 29389, 5889…
+$ geometry         &lt;MULTIPOLYGON [m]&gt; MULTIPOLYGON (((-3621016 69..., MULTIPOL…</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>tmap mode set to plotting</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(<span class="fu">jenks_plot</span>(cases_rate, <span class="st">"2021-07-01"</span>),</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>             <span class="fu">jenks_plot</span>(cases_rate, <span class="st">"2021-08-01"</span>),</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>             <span class="fu">jenks_plot</span>(cases_rate, <span class="st">"2021-09-01"</span>),</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>             <span class="fu">jenks_plot</span>(cases_rate, <span class="st">"2021-10-01"</span>),</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>             <span class="fu">jenks_plot</span>(cases_rate, <span class="st">"2021-11-01"</span>),</span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>             <span class="fu">jenks_plot</span>(cases_rate, <span class="st">"2021-12-01"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Legend labels were too wide. The labels have been resized to 0.47, 0.47, 0.47, 0.47, 0.47, 0.47. Increase legend.width (argument of tm_layout) to make the legend wider and therefore the labels larger.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Legend labels were too wide. The labels have been resized to 0.47, 0.47, 0.47, 0.47, 0.47, 0.47. Increase legend.width (argument of tm_layout) to make the legend wider and therefore the labels larger.
+Legend labels were too wide. The labels have been resized to 0.47, 0.47, 0.47, 0.47, 0.47, 0.47. Increase legend.width (argument of tm_layout) to make the legend wider and therefore the labels larger.
+Legend labels were too wide. The labels have been resized to 0.47, 0.47, 0.47, 0.47, 0.47, 0.47. Increase legend.width (argument of tm_layout) to make the legend wider and therefore the labels larger.
+Legend labels were too wide. The labels have been resized to 0.47, 0.47, 0.47, 0.47, 0.47, 0.47. Increase legend.width (argument of tm_layout) to make the legend wider and therefore the labels larger.
+Legend labels were too wide. The labels have been resized to 0.47, 0.47, 0.47, 0.47, 0.47, 0.47. Increase legend.width (argument of tm_layout) to make the legend wider and therefore the labels larger.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="Takehome_Ex02_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 

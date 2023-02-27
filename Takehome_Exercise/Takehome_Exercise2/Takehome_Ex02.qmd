@@ -139,7 +139,7 @@ For proper and meaningful data analysis, we always need to examine the necessary
 Let's take a look at our original datasets by importing one of our aspatial data
 
 ```{r}
-Aug2022 <- read_xlsx("data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 August 2022).xlsx")
+Aug2022 <- read_xlsx("data/aspatial/Data Vaksinasi Berbasis Kelurahan (01 August 2021).xlsx")
 ```
 
 view the whole excel file to understand the data
@@ -198,7 +198,7 @@ for (file in file_list) {
 
 ```{r}
  vaccination_data <-  vaccination_data %>%
-  select(1:6, 28)
+  select(1:6, "date")
 ```
 
 ```{r}
@@ -321,4 +321,67 @@ yet_to_be_vac = tm_shape(combined_jakarta)+
   tm_layout(main.title="Yet_to_be_Vaccinated")
 
 tmap_arrange(target_cases, yet_to_be_vac)
+```
+
+**Calculate Monthly Vaccination Rate**
+
+```{r}
+combined_jakarta$Monthly_Vacinnation_Rate <- (combined_jakarta$Target - combined_jakarta$Yet_to_be_Vaccinated) / combined_jakarta$Target
+```
+
+```{r}
+vaccination_data$date <- as.character(vaccination_data$date)
+```
+
+```{r}
+cases_rate <- vaccination_data %>%
+  inner_join(jakarta, by=c("Sub_District" = "Sub_District")) %>%
+  group_by(Sub_District, date) %>%
+  dplyr::summarise(`Monthly_Vac_R` = ((Target-Yet_to_be_Vaccinated)/Target)) %>%
+  ungroup() %>% pivot_wider(names_from = date,
+              values_from = Monthly_Vac_R)
+```
+
+**Monthly Vaccination Rate Mapping**
+
+```{r}
+combined_jakarta <- st_as_sf(combined_jakarta)
+
+# need to join our previous dataframes with the geospatial data to ensure that geometry column is present
+cases_rate <- cases_rate%>% left_join(jakarta, by=c("Sub_District"="Sub_District"))
+cases_rate <- st_as_sf(cases_rate)
+
+```
+
+```{r}
+jenks_plot <- function(df, varname) {
+  tm_shape(jakarta) +
+    tm_polygons() +
+  tm_shape(df) +
+    tm_fill(varname, 
+          n= 6,
+          style = "jenks", 
+          title = "Case Rate") +
+    tm_layout(main.title = varname,
+          main.title.position = "center",
+          main.title.size = 1.2,
+          legend.height = 0.45, 
+          legend.width = 0.35,
+          frame = TRUE) +
+    tm_borders(alpha = 0.5)
+}
+```
+
+```{r}
+glimpse(cases_rate)
+```
+
+```{r}
+tmap_mode("plot")
+tmap_arrange(jenks_plot(cases_rate, "2021-07-01"),
+             jenks_plot(cases_rate, "2021-08-01"),
+             jenks_plot(cases_rate, "2021-09-01"),
+             jenks_plot(cases_rate, "2021-10-01"),
+             jenks_plot(cases_rate, "2021-11-01"),
+             jenks_plot(cases_rate, "2021-12-01"))
 ```
