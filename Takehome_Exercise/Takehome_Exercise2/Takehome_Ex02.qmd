@@ -403,18 +403,7 @@ tmap_arrange(jenks_plot(vac_rate , "2022-01-01"),
 
 ### Spatial patterns revealed by the choropleth maps
 
-```{r}
-tmap_mode("view")
-
-tm_shape(combined_jakarta) +
-  tm_fill("Target",
-          n = 5,
-          style = "jenks") +
-  tm_borders(alpha = 0.5) +
-  tm_text("Sub_District", size = 0.5) +
- 
-  tm_view(set.zoom.limits = c(11,14))
-```
+First we could observe that each map has its own relative vacinnation rate: the ranges gradually grow larger over time . In the early stages (July 2021), the subdistrict with highest vaccination rate is only 55.2% but it gradually increases over month, at first we could observe that the north part and central part of the Jakarta has a relatively high vaccination rate, then their neighbouring region's vaccination rate start to increase, this might due to the close proximity of the neighbouring region. People could easy access to the region has more vaccines (be vaccinated in their own subdistrict or nearby subdistrict. We also could observe that after March 2022, the vaccination rate becomes stable which suggest most of the population has vaccinated. Meanwhile, from 2021 Nov to 2022 June, we could observe that the most southwest part, region including CIPEDAK, SRENGSENG SAWAH, CIGANJUR, have higher rate of vaccination
 
 ## **Local Gi\* Analysis**
 
@@ -482,6 +471,8 @@ tmap_arrange(map1, map2, ncol = 2)
 
 ### Statistical Conclusions
 
+From the graph we could observe that the region, Kebon Kacang and Cipinang Cempedak, the two regions has the gi\* value less than -2 and has a statistically significant p value which is less than 0.05, shows that they are significantly different from their neighbour ("opposite" of clustering) it suggests that the two regions has vaccination rate significantly lower than their neighbor regions.Meanwhile, for the regions at most south west part, CIPEDAK, SRENGSENG SAWAH, CIGANJUR, they have positive gi\* value larger than 2, showing a cluster sign, it shows that these regions has a higher vaccination rate than their neighbouring country
+
 ## Emerging Hot Spot Analysis(EHSA)
 
 ### Creating a Time Series Cube
@@ -516,12 +507,12 @@ gi_stars <- jakarta_nb %>%
 
 Mann-Kendall Test
 
-### Sub_District 1: PETAMBURAN
+### Sub_District 1: Kebon Kacang
 
 ```{r}
 cbg <- gi_stars %>% 
   ungroup() %>% 
-  filter(Sub_District == "KEAGUNGAN") |> 
+  filter(Sub_District == "KEBON KACANG") |> 
   select(Sub_District,date, gi_star)
 ```
 
@@ -543,7 +534,9 @@ cbg %>%
   tidyr::unnest_wider(mk)
 ```
 
-Sub_District 2
+In the above result, sl is the p-value. This result tells us that there is a significant downwards trend, showing that it has a lower monthly vaccination value which is different of its neighbor which has high vaccination rate
+
+#### Sub_District 2 KEBON MELATI
 
 ```{r}
 cbg2 <- gi_stars %>% 
@@ -570,12 +563,14 @@ cbg2 %>%
   tidyr::unnest_wider(mk)
 ```
 
+Similarly as Kebon Kacang, this result tells us that there is a significant downwards trend, showing that it has a lower monthly vaccination value which is different of its neighbor which has high vaccination rate
+
 Sub_District 3
 
 ```{r}
 cbg3 <- gi_stars %>% 
   ungroup() %>% 
-  filter(Sub_District == "KEBON KACANG") |> 
+  filter(Sub_District == "CIPEDAK") |> 
   select(Sub_District,date, gi_star)
 ```
 
@@ -597,7 +592,9 @@ cbg3 %>%
   tidyr::unnest_wider(mk)
 ```
 
-## **Performing Emerging Hotspot Analysis**
+For CIPEDAK, it has a significant upwards trends, it tells us it has a higher monthly vaccination value which is different of its neighbor which has relatively lower vaccination rate
+
+## **Compute Emerging Hotspot** 
 
 ```{r}
 ehsa <- gi_stars %>%
@@ -622,9 +619,3 @@ ehsa <- emerging_hotspot_analysis(
   nsim = 99
 )
 ```
-
-```{r}
-ehsa <- st_as_sf(ehsa)
-```
-
-Credit:
