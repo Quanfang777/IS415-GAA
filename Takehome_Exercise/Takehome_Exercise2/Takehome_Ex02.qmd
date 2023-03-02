@@ -28,7 +28,7 @@ Despite its compactness, the cumulative vaccination rate are not evenly distribu
 ### Package Used
 
 ```{r}
-pacman::p_load(sf, spdep, tmap, tidyverse, knitr,readxl,dplyr,lubridate,stringr)
+pacman::p_load(sf, spdep, tmap, tidyverse, knitr,readxl,dplyr,lubridate,stringr,sfdep)
 ```
 
 ### Dataset Used
@@ -384,4 +384,138 @@ tmap_arrange(jenks_plot(cases_rate, "2021-07-01"),
              jenks_plot(cases_rate, "2021-10-01"),
              jenks_plot(cases_rate, "2021-11-01"),
              jenks_plot(cases_rate, "2021-12-01"))
+```
+
+```{r}
+tmap_mode("plot")
+tmap_arrange(jenks_plot(cases_rate, "2022-01-01"),
+             jenks_plot(cases_rate, "2022-02-01"),
+             jenks_plot(cases_rate, "2022-03-02"),
+             jenks_plot(cases_rate, "2022-04-01"),
+             jenks_plot(cases_rate, "2022-05-01"),
+             jenks_plot(cases_rate, "2022-06-01"))
+```
+
+Preparing LISA map classes
+
+Local Gi\* Analysis
+
+Local Spatial Autocorrelation Statistics:
+
+A collection of geospatial statistical analysis methods for analysing the location related tendency (clusters or outliers) in the attributes of geographically referenced data (points or areas).
+
+Can be indecies decomposited from their global measures such as local Moran's I, local Geary's c, and Getis-Ord Gi\*.
+
+These spatial statistics are well suited for:
+
+detecting clusters or outliers;
+
+identifying hot spot or cold spot areas;
+
+assessing the assumptions of stationarity; and
+
+identifying distances beyond which no discernible association obtains.
+
+```{r}
+wm_idw <- combined_jakarta %>%
+  mutate(nb = st_contiguity(geometry),
+         wts = st_inverse_distance(nb, geometry,
+                                   scale = 1,
+                                   alpha = 1),
+         .before = 1)
+```
+
+```{r}
+HCSA <- wm_idw %>% 
+  mutate(local_Gi = local_gstar_perm(
+    Monthly_Vacinnation_Rate, nb, wt, nsim = 99),
+         .before = 1) %>%
+  unnest(local_Gi)
+HCSA
+```
+
+```{r}
+tmap_mode("plot")
+tm_shape(HCSA) +
+  tm_fill("gi_star") + 
+  tm_borders(alpha = 0.5) +
+  tm_view(set.zoom.limits = c(6,8))
+```
+
+```{r}
+tmap_mode("plot")
+tm_shape(HCSA) +
+  tm_fill("p_sim") + 
+  tm_borders(alpha = 0.5)
+```
+
+```{r}
+tmap_mode("plot")
+map1 <- tm_shape(HCSA) +
+  tm_fill("gi_star") + 
+  tm_borders(alpha = 0.5) +
+  tm_view(set.zoom.limits = c(6,8)) +
+  tm_layout(main.title = "Gi* of Monthly Vacinnation Rate",
+            main.title.size = 0.8)
+
+map2 <- tm_shape(HCSA) +
+  tm_fill("p_value",
+          breaks = c(0, 0.001, 0.01, 0.05, 1),
+              labels = c("0.001", "0.01", "0.05", "Not sig")) + 
+  tm_borders(alpha = 0.5) +
+  tm_layout(main.title = "p-value of Gi*",
+            main.title.size = 0.8)
+
+tmap_arrange(map1, map2, ncol = 2)
+```
+
+```{r}
+jakarta_cube <- combined_jakarta %>% select ("Sub_District","date","Monthly_Vacinnation_Rate")
+```
+
+```{r}
+jakarta_st <- spacetime(jakarta_cube , jakarta,
+                      .loc_col = "Sub_District",
+                      .time_col = "date")
+```
+
+```{r}
+is_spacetime_cube(jakarta_st)
+```
+
+```{r}
+jakarta_nb <- jakarta_st %>% activate("geometry") %>% mutate (nb=include_self(st_contiguity(geometry)),wt=st_weights(nb))%>% set_wts("wt")%>%set_nbs("nb")
+```
+
+```{r}
+glimpse(jakarta_nb)
+
+```
+
+Mann-Kendall Test
+
+```{r}
+gi_stars <- jakarta_nb %>% 
+  group_by(date) %>% 
+  mutate(gi_star = local_gstar_perm(
+    Monthly_Vacinnation_Rate, nb, wt)) %>% 
+  tidyr::unnest(gi_star)
+```
+
+```{r}
+ehsa <- gi_stars %>%
+  group_by(Sub_District) %>%
+  summarise(mk = list(
+    unclass(
+      Kendall::MannKendall(gi_star)))) %>%
+  tidyr::unnest_wider(mk)
+```
+
+```{r}
+ehsa <- emerging_hotspot_analysis(
+  x = jakarta_st, 
+  .var = "Monthly_Vacinnation_Rate", 
+  k = 1, 
+  nsim = 99
+)
 ```
