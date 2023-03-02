@@ -303,7 +303,7 @@ jakarta$Sub_District[jakarta$Sub_District == 'PINANGRANTI'] <- 'PINANG RANTI'
 jakarta$Sub_District[jakarta$Sub_District == 'RAWAJATI'] <- 'RAWA JATI'
 ```
 
-Do the joii
+Do the join
 
 ```{r}
 combined_jakarta <- left_join(jakarta, vaccination_data,
@@ -337,7 +337,7 @@ combined_jakarta$Monthly_Vacinnation_Rate <- (combined_jakarta$Target - combined
 To plot the monthly vaccination rate, we need to make the each date value as column, we should have the format by running the code below:
 
 ```{r}
-cases_rate <- vaccination_data %>%
+vac_rate <- vaccination_data %>%
   inner_join(jakarta, by=c("Sub_District" = "Sub_District")) %>%
   group_by(Sub_District, date) %>%
   dplyr::summarise(`Monthly_Vac_R` = ((Target-Yet_to_be_Vaccinated)/Target)) %>%
@@ -351,8 +351,8 @@ cases_rate <- vaccination_data %>%
 combined_jakarta <- st_as_sf(combined_jakarta)
 
 # need to join our previous dataframes with the geospatial data to ensure that geometry column is present
-cases_rate <- cases_rate%>% left_join(jakarta, by=c("Sub_District"="Sub_District"))
-cases_rate <- st_as_sf(cases_rate)
+vac_rate <- vac_rate %>% left_join(jakarta, by=c("Sub_District"="Sub_District"))
+vac_rate  <- st_as_sf(vac_rate)
 
 ```
 
@@ -366,7 +366,7 @@ jenks_plot <- function(df, varname) {
     tm_fill(varname, 
           n= 6,
           style = "jenks", 
-          title = "Case Rate") +
+          title = "Vaccinnation Rate") +
     tm_layout(main.title = varname,
           main.title.position = "center",
           main.title.size = 1.2,
@@ -378,30 +378,43 @@ jenks_plot <- function(df, varname) {
 ```
 
 ```{r}
-glimpse(cases_rate)
+glimpse(vac_rate)
 ```
 
 ```{r}
 tmap_mode("plot")
-tmap_arrange(jenks_plot(cases_rate, "2021-07-01"),
-             jenks_plot(cases_rate, "2021-08-01"),
-             jenks_plot(cases_rate, "2021-09-01"),
-             jenks_plot(cases_rate, "2021-10-01"),
-             jenks_plot(cases_rate, "2021-11-01"),
-             jenks_plot(cases_rate, "2021-12-01"))
+tmap_arrange(jenks_plot(vac_rate , "2021-07-01"),
+             jenks_plot(vac_rate , "2021-08-01"),
+             jenks_plot(vac_rate , "2021-09-01"),
+             jenks_plot(vac_rate , "2021-10-01"),
+             jenks_plot(vac_rate , "2021-11-01"),
+             jenks_plot(vac_rate , "2021-12-01"))
 ```
 
 ```{r}
 tmap_mode("plot")
-tmap_arrange(jenks_plot(cases_rate, "2022-01-01"),
-             jenks_plot(cases_rate, "2022-02-01"),
-             jenks_plot(cases_rate, "2022-03-02"),
-             jenks_plot(cases_rate, "2022-04-01"),
-             jenks_plot(cases_rate, "2022-05-01"),
-             jenks_plot(cases_rate, "2022-06-01"))
+tmap_arrange(jenks_plot(vac_rate , "2022-01-01"),
+             jenks_plot(vac_rate , "2022-02-01"),
+             jenks_plot(vac_rate , "2022-03-02"),
+             jenks_plot(vac_rate , "2022-04-01"),
+             jenks_plot(vac_rate , "2022-05-01"),
+             jenks_plot(vac_rate , "2022-06-01"))
 ```
 
 ### Spatial patterns revealed by the choropleth maps
+
+```{r}
+tmap_mode("view")
+
+tm_shape(combined_jakarta) +
+  tm_fill("Target",
+          n = 5,
+          style = "jenks") +
+  tm_borders(alpha = 0.5) +
+  tm_text("Sub_District", size = 0.5) +
+ 
+  tm_view(set.zoom.limits = c(11,14))
+```
 
 ## **Local Gi\* Analysis**
 
