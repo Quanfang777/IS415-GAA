@@ -55,6 +55,8 @@ website:
             href: "Takehome_Exercise/Takehome_Exercise1/Takehome_Ex01.html"
           - text: "Takehome_Exercise2"
             href: "Takehome_Exercise/Takehome_Exercise2/Takehome_Ex02.html"
+          - text: "Takehome_Exercise3"
+            href: "Takehome_Exercise/Takehome_Exercis3/Takehome_Ex03.html"            
 
 format:
   html:
