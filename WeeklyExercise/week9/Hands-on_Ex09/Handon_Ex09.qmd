@@ -3,4 +3,48 @@ title: "Handon_Ex09"
 editor: visual
 ---
 
-week9
+# 
+
+Calibrating Hedonic Pricing Model for Private Highrise Property with GWR Method
+
+## Overview
+
+Geographically weighted regression (GWR) is a spatial statistical technique that takes non-stationary 非稳态的 variables into consideration ( climate, demographic factors) In this hand-on, I will build [hedonic](https://www.investopedia.com/terms/h/hedonicpricing.asp) pricing model by using GWR methods
+
+## The Data
+
+Two data sets will be used in this model building exercise, they are:
+
+-   URA Master Plan subzone boundary in shapefile format (i.e. *MP14_SUBZONE_WEB_PL*)
+
+-   condo_resale_2015 in csv format (i.e. *condo_resale_2015.csv*)
+
+## Getting Started
+
+### Load necessary Package
+
+```{r}
+pacman::p_load(olsrr, corrplot, ggpubr, sf, spdep, GWmodel, tmap, tidyverse, gtsummary)
+```
+
+### Importing geospatial data
+
+```{r}
+mpsz = st_read(dsn = "data/geospatial", layer = "MP14_SUBZONE_WEB_PL")
+```
+
+### Updating CRS information
+
+```{r}
+mpsz_svy21 <- st_transform(mpsz, 3414)
+```
+
+```{r}
+st_crs(mpsz_svy21)
+```
+
+```{r}
+condo_resale = read_csv("data/aspatial/Condo_resale_2015.csv")
+```
+
+### 
