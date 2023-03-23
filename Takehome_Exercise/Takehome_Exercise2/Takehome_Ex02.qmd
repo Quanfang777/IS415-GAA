@@ -594,7 +594,7 @@ cbg3 %>%
 
 For CIPEDAK, it has a significant upwards trends, it tells us it has a higher monthly vaccination value which is different of its neighbor which has relatively lower vaccination rate
 
-## **Compute Emerging Hotspot** 
+## **Compute Emerging Hotspot**
 
 ```{r}
 ehsa <- gi_stars %>%

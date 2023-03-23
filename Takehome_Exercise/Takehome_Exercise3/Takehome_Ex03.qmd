@@ -214,7 +214,7 @@ Eldercare_sf <- st_transform(Eldercare_sf, crs=3414)
 library(sf)
 library(onemapsgapi)
 
-token <- "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDUyLCJ1c2VyX2lkIjoxMDA1MiwiZW1haWwiOiJ0YWtvdGFrb3YwMDBAZ21haWwuY29tIiwiZm9yZXZlciI6ZmFsc2UsImlzcyI6Imh0dHA6XC9cL29tMi5kZmUub25lbWFwLnNnXC9hcGlcL3YyXC91c2VyXC9zZXNzaW9uIiwiaWF0IjoxNjc5MDQ0NzE3LCJleHAiOjE2Nzk0NzY3MTcsIm5iZiI6MTY3OTA0NDcxNywianRpIjoiOTdlYzA1NDk2YTJlNGMwMWUyNDFiMGRlMDgyOWY5YjMifQ.6vnUA55we0IJa_-I5eNv2o8MCrc0hVpxmXnBzMfhSDM"
+token <- "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDUyLCJ1c2VyX2lkIjoxMDA1MiwiZW1haWwiOiJ0YWtvdGFrb3YwMDBAZ21haWwuY29tIiwiZm9yZXZlciI6ZmFsc2UsImlzcyI6Imh0dHA6XC9cL29tMi5kZmUub25lbWFwLnNnXC9hcGlcL3YyXC91c2VyXC9zZXNzaW9uIiwiaWF0IjoxNjc5NTU4NDYxLCJleHAiOjE2Nzk5OTA0NjEsIm5iZiI6MTY3OTU1ODQ2MSwianRpIjoiZDgyZTg1MDMzMTUzMTRkZjEzYjk5MWJmMDJkMDQ1NjIifQ.070RoJrraz95GuLVvYZpfzyMyGWQZ6S0D5FsLL39WGU"
 ```
 
 ```{r}
@@ -475,6 +475,45 @@ length(which(st_is_valid(bus_sf) == FALSE))
 ```
 
 ```{r}
+# # Identify the invalid geometry
+# library(leaflet)
+# invalid_geom <- which(!st_is_valid(rail_network_sf))
+# 
+# # Use st_cast() to convert the invalid geometry to a valid geometry type
+# rail_network_sf <- st_cast(rail_network_sf, "MULTILINESTRING")
+# 
+# # Use shiny to manually edit the geometry
+# library(shiny)
+# shinyApp(
+#   ui = fluidPage(
+#     leafletOutput("map")
+#   ),
+#   server = function(input, output) {
+#     output$map <- renderLeaflet({
+#       leaflet(rail_network_sf) %>%
+#         addTiles() %>%
+#         addPolylines()
+#     })
+#     observe({
+#       if (!is.null(input$map_shape_click)) {
+#         clicked_shape <- input$map_shape_click
+#         if (clicked_shape$type == "polyline") {
+#           # Edit the clicked polyline shape
+#           edited_shape <- leafletProxy("map") %>%
+#             editPolyline(target = clicked_shape$id) %>%
+#             asJSON()
+#           rail_network_sf <- st_as_sf(fromJSON(edited_shape))
+#         }
+#       }
+#     })
+#   }
+# )
+# 
+# # Make the geometry valid
+# rail_network_sf <- st_make_valid(rail_network_sf)
+```
+
+```{r}
 length(which(st_is_valid(rail_network_sf) == FALSE))
 ```
 
@@ -556,9 +595,22 @@ tm_shape(top10prisch_sf) +
         size=0.05)
 ```
 
-###  Structural Factors
+### Structural Factors
 
-### 
+```{r}
+library(units)
+proximity <- function(df1, df2, varname) {
+  dist_matrix <- st_distance(df1, df2) %>%
+    drop_units()
+  df1[,varname] <- rowMins(dist_matrix)
+  return(df1)
+}
+```
+
+```{r}
+install.packages("matrixStats")
+library(matrixStats)
+```
 
 ### Exploratory Data Analysis (EDA)
 
@@ -590,6 +642,17 @@ tm_shape(resale.sf) +
           alpha = 0.6,
           style="quantile") +
   tm_view(set.zoom.limits = c(11,14))
+```
+
+FLOOR LEVEL
+
+```{r}
+proximity <- function(df1, df2, varname) {
+  dist_matrix <- st_distance(df1, df2) %>%
+    drop_units()
+  df1[,varname] <- rowMins(dist_matrix)
+  return(df1)
+}
 ```
 
 ### Hedonic Pricing Modelling
