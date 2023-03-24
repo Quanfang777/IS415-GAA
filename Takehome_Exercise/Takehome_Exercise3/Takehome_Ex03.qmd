@@ -386,7 +386,7 @@ malls_sf <- st_as_sf(malls_coords,
   st_transform(crs = 3414)
 ```
 
-#### Good Primary School
+#### Primary School
 
 ```{r}
 pri_sch <- read_csv("data/geospatial/general-information-of-schools.csv")
@@ -423,7 +423,7 @@ prisch_sf <- st_as_sf(pri_sch,
   st_transform(crs = 3414)
 ```
 
-Select top 10 school
+#### Select top 10 school
 
 ```{r}
 postal_codes <- c(599986, 449761, 597610, 536451, 579767, 128806, 569405, 738907, 579646, 227988)
@@ -466,6 +466,14 @@ rail_network_sf <- st_read(dsn="data/geospatial/TrainStation_Feb2023", layer="Ra
 
 ```{r}
 rail_network_sf<- st_transform(rail_network_sf, crs=3414)
+```
+
+```{r}
+supermkt_sf <- st_read("data/geospatial/supermarkets-geojson.geojson")
+```
+
+```{r}
+supermkt_sf<- st_transform(supermkt_sf, crs=3414)
 ```
 
 #### Check invalid geometry for locational factor
@@ -612,40 +620,6 @@ install.packages("matrixStats")
 library(matrixStats)
 ```
 
-### Exploratory Data Analysis (EDA)
-
-```{r}
-ggplot(data= resale.sf, aes(x=`resale_price`)) +
-  geom_histogram(bins=20, color="black", fill="light blue")
-```
-
-The figure above reveals a right skewed distribution. This means that more condominium units were transacted at relative lower price, and we need to normalize it by using log transformation
-
-```{r}
-resale.sf <- resale.sf %>%
-  mutate(`log_resale_price` = log(resale_price))
-```
-
-```{r}
-ggplot(data=resale.sf, aes(x=`log_resale_price`)) +
-  geom_histogram(bins=20, color="black", fill="light blue")
-```
-
-### Drawing Statistical Point Map
-
-```{r}
-tmap_mode("view")
-tm_shape(mpsz_svy21)+
-  tm_polygons() +
-tm_shape(resale.sf) +  
-  tm_dots(col = "resale_price",
-          alpha = 0.6,
-          style="quantile") +
-  tm_view(set.zoom.limits = c(11,14))
-```
-
-FLOOR LEVEL
-
 ```{r}
 proximity <- function(df1, df2, varname) {
   dist_matrix <- st_distance(df1, df2) %>%
@@ -654,6 +628,67 @@ proximity <- function(df1, df2, varname) {
   return(df1)
 }
 ```
+
+```{r}
+# resale.sf <- 
+#   # the columns will be truncated later on when viewing 
+#   # so we're limiting ourselves to two-character columns for ease of viewing between
+#   proximity(resale.sf, cbd_sf, "PROX_CBD") %>%
+#   proximity(., childcaresf, "PROX_CHILDCARE") %>%
+#   proximity(., Eldercare_sf, "PROX_ELDERCARE") %>%
+#   proximity(., hawker_sf, "PROX_HAWKER") %>%
+#   proximity(., rail_network_sf, "PROX_MRT") %>%
+#   proximity(., Parks_sf, "PROX_PARK") %>%
+#   proximity(., top10prisch_sf, "PROX_TOPPRISCH") %>%
+#   proximity(., malls_sf, "PROX_MALL") %>%
+#   proximity(., supermkt_sf, "PROX_SPRMKT") 
+
+```
+
+```{r}
+# num_radius <- function(df1, df2, varname, radius) {
+#   dist_matrix <- st_distance(df1, df2) %>%
+#     drop_units() %>%
+#     as.data.frame()
+#   df1[,varname] <- rowSums(dist_matrix <= radius)
+#   return(df1)
+# }
+```
+
+```{r}
+# resale.sf <- 
+#   num_radius(resale.sf, Kindergartens_sf, "NUM_KNDRGTN", 350) %>%
+#   num_radius(., childcaresf, "NUM_CHILDCARE", 350) %>%
+#   num_radius(., bus_sf, "NUM_BUS_STOP", 350) %>%
+#   num_radius(., prisch_sf, "NUM_PriSch", 1000)
+```
+
+```{r}
+# resale.sf <- resale.sf %>%
+#   # sometimes, you might get an internal error: can't find `agr` columns
+#   # to circumvent, have an empty mutate()
+#   # you won't affect your columns, but it corrects the agr attribute names
+#   # reference: https://github.com/r-spatial/sf/issues/1472
+#   mutate() %>%
+#   rename("AREA_SQM" = "floor_area_sqm", 
+#          "LEASE_YRS" = "remaining_lease", 
+#          "PRICE"= "resale_price") %>%
+#   relocate(`PRICE`)
+```
+
+The figure above reveals a right skewed distribution. This means that more condominium units were transacted at relative lower price, and we need to normalize it by using log transformation
+
+```{r}
+# st_write(resale.sf, "data/geospatial/resale-allfinal.shp")
+```
+
+```{r}
+resale_sf <- st_read(dsn="data/geospatial", layer="resale-allfinal")
+```
+
+### Drawing Statistical Point Map
+
+FLOOR LEVEL
 
 ### Hedonic Pricing Modelling
 
