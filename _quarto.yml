@@ -27,7 +27,7 @@ website:
             href: "WeeklyExercise/week11/Hands-on_Ex11/Handon_Ex11.html"  
           - text: "Hand-on Exercise12"
             href: "WeeklyExercise/week12/Hands-on_Ex12/Handon_Ex12.html" 
-      - text: "In-class Exercise"
+      - text: "In-Class Exercise"        
         menu: 
           - text: "In-Class Exercise 2"
             href: "WeeklyExercise/week2/In-Class_Ex02/InClassEx02.html"
