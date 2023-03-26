@@ -861,6 +861,10 @@ Before building a multiple regression model, it is important to ensure that the 
 
 From the scatterplot matrix , we could see that we have "lease_commence_date" highly corrlated to "Lease_Years" so we decided to remove "lease_commence_date" to prevent the issue of **multicollinearity**
 
+```{r}
+#resale.sf<- select(resale.sf, -lease_commence_date)
+```
+
 ### Data Sampling
 
 ```{r}
@@ -890,20 +894,75 @@ train_data_sp
 ```
 
 ```{r}
+# bw_adaptive <- bw.gwr(PRICE ~ AREA_SQM + PROX_CBD +  PROX_ELDERCARE + PROX_HAWKER+ PROX_MRT +  PROX_PARK + PROX_TOPPRISCH + PROX_MALL +PROX_SPRMKT +LEASE_YRS + NUM_CHILDCARE + NUM_KNDRGTN,
+#                   data=train_data_sp,
+#                   approach="CV",
+#                   kernel="gaussian",
+#                   adaptive=TRUE,
+#                   longlat=FALSE)
+# 
 
 ```
 
 ```{r}
+# saving the result as an rds object
+# write_rds(bw_adaptive, "data/ML_results/bw_adaptive.rds")
+```
 
+Constructing the adaptive bandwidth gwr model
+
+```{r}
+bw_adaptive <- read_rds("data/ML_results/bw_adaptive.rds")
 ```
 
 ```{r}
-
+# gwr_adaptive <- 
+#   
+#   gwr.basic(formula = PRICE ~ AREA_SQM + PROX_CBD +  PROX_ELDERCARE + PROX_HAWKER+ PROX_MRT +  PROX_PARK + PROX_TOPPRISCH + PROX_MALL +PROX_SPRMKT +LEASE_YRS + NUM_CHILDCARE + NUM_KNDRGTN,
+#                           data=train_data_sp,
+#                           bw=bw_adaptive, 
+#                           kernel = 'gaussian', 
+#                           adaptive=TRUE,
+#                           longlat = FALSE)
 ```
 
 ```{r}
-
+# write_rds(gwr_adaptive, "data/ML_results/gwr_adaptive.rds")
 ```
+
+```{r}
+gwr_adaptive <- read_rds("data/ML_results/gwr_adaptive.rds")
+gwr_adaptive
+```
+
+### Preparing coordinates data
+
+```{r}
+coords <- st_coordinates(resale.sf)
+coords_train <- st_coordinates(training_data)
+coords_test <- st_coordinates(testing_data)
+```
+
+```{r}
+coords_train <- write_rds(coords_train, "data/ML_results/coords_train.rds" )
+coords_test <- write_rds(coords_test, "data/ML_results/coords_test.rds" )
+```
+
+```{r}
+coords_train<-read_rds("data/ML_results/coords_train.rds")
+coords_test<-read_rds("data/ML_results/coords_test.rds")
+```
+
+Dropping geometry field
+
+```{r}
+train_data <- training_data %>% 
+  st_drop_geometry()
+
+write_rds(train_data, "data/ML_results/train_data.rds")
+```
+
+### Calibrating Random Forest Model
 
 ```{r}
 
