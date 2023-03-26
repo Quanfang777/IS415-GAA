@@ -68,6 +68,8 @@ mpsz2019 = st_read(dsn = "data/geospatial", layer = "MPSZ-2019")
 mpsz_svy21 <- st_transform(mpsz2019, 3414)
 ```
 
+check whether the CRS has correctly assigned:
+
 ```{r}
 st_crs(mpsz_svy21)
 ```
@@ -78,7 +80,7 @@ st_crs(mpsz_svy21)
 length(which(st_is_valid(mpsz_svy21) == FALSE))
 ```
 
-Make the invalid geometries valid
+### Make the invalid geometries valid
 
 ```{r}
 mpsz_svy21 <- st_make_valid(mpsz_svy21)
@@ -97,16 +99,19 @@ We plan to look at **four-room flat** and a transaction period between1st Januar
 
 ```{r}
 resale <- resale %>% 
-  filter(flat_type == "4 ROOM") %>%
-  filter(month >= "2021-01" & month < "2023-01")
+  filter(flat_type == "4 ROOM") 
 resale
 ```
 
-However, when we look at the code, there is no Longitude and Latitude Information, which means we need to geocode it, to make sure we get accurate geocode result, we have to combine the Block and Street Name as input:
+However, when we look at the code, there is no Longitude and Latitude Information, which means we need to geocode it, to make sure we get accurate geocode result, we have to combine the **Block and Street Name** as input:
+
+In OneMapSG API, "ST." is usually written as "SAINT" instead, so it is better for us to replace ST. with SAINT
 
 ```{r}
 resale$street_name <- gsub("ST\\.", "SAINT", resale$street_name)
 ```
+
+Here is the code for geocoding the aspatial data: (Reference was taken from the senior sample submissions for the code for this section, with credit to MEGAN SIM TZE YEN)
 
 ```{r}
 # 
@@ -146,19 +151,19 @@ resale$street_name <- gsub("ST\\.", "SAINT", resale$street_name)
 
 **Make a copy for the geocoded data:**
 
+Make a copy for the geocoded data so we don't need to run the previous process again:
+
 ```{r}
 #write_csv(resale, "data/rds/resalecopy1.csv")
 ```
 
-#### Converting aspatial data frame into a sf object
+#### Read the geocoded data
 
 ```{r}
 resale = read_csv("data/rds/resalecopy1.csv")
 ```
 
-```{r}
-view(resale)
-```
+### Update CRS
 
 ```{r}
 resale.sf <- st_as_sf(resale,
@@ -167,15 +172,48 @@ resale.sf <- st_as_sf(resale,
   st_transform(crs=3414)
 ```
 
+### Structural Factors
+
+#### FLOOR LEVEL
+
 ```{r}
-rs_transform <- resale.sf %>%
-  mutate(resale.sf, address = paste(block,street_name)) %>%
-  mutate(resale.sf, remaining_lease_yr = as.integer(str_sub(remaining_lease, 0, 2))) %>%
-  mutate(resale.sf, remaining_lease_mth = as.integer(str_sub(remaining_lease, 9, 11)))
+unique(resale$storey_range)
+```
+
+We can observe that there are 17 categories of storey ranges. To represent each range, we will use the pivot_wider() function to create duplicate variables, assigning a value of 1 if the observation falls within the range and 0 if it does not.
+
+```{r}
+resale <- resale %>%
+  pivot_wider(names_from = storey_range, values_from = storey_range, 
+              values_fn = list(storey_range = ~1), values_fill = 0) 
+```
+
+#### REMAINING LEASE
+
+The current format of the remaining_lease variable is a string, but we need it to be in numeric format. To achieve this, we can split the string into its month and year values, calculate the remaining lease in years, and replace the original string values with the calculated numeric values.
+
+```{r}
+str_list <- str_split(resale$remaining_lease, " ")
+
+for (i in 1:length(str_list)) {
+  if (length(unlist(str_list[i])) > 2) {
+      year <- as.numeric(unlist(str_list[i])[1])
+      month <- as.numeric(unlist(str_list[i])[3])
+      resale$remaining_lease[i] <- year + round(month/12, 2)
+  }
+  else {
+    year <- as.numeric(unlist(str_list[i])[1])
+    resale$remaining_lease[i] <- year
+  }
+}
 ```
 
 ```{r}
-add_list <- sort(unique(rs_transform$address))
+resale_sf <- st_as_sf(resale, 
+                      coords = c("LONGITUDE", 
+                                 "LATITUDE"), 
+                      crs=4326) %>%
+  st_transform(crs = 3414)
 ```
 
 ### Locational Factor
@@ -209,6 +247,14 @@ Eldercare_sf <- st_transform(Eldercare_sf, crs=3414)
 ```
 
 #### **Kindergartens**
+
+To get the Kindergartens' geometry data, I refer to Megan's method of using ONEMAP API to do the geocoding
+
+The step including:
+
+1.  Get the token from ONEMAP API
+2.  Search the themes and check the themes available
+3.  Using get_theme function to get the geospatial information of the Kindergarten
 
 ```{r}
 library(sf)
@@ -272,7 +318,15 @@ Parks_sf <- st_transform(Parks_sf, crs=3414)
 
 #### Shopping mall
 
-Get Call function
+(Reference was taken from the senior sample submissions for the code for this section, with credit to NOR AISYAH BINTE AJIT) The approach is about extracting the names of the malls from Wikipedia and then use get_coords function to obtain the respective coordinates
+
+The following code chunk performs three steps:
+
+-   Reads the Wikipedia HTML page containing the Shopping Malls in Singapore.
+
+-   Reads the text portion of the unordered list element selected by html_nodes().
+
+-   Appends the extracted mall names to an empty mall_list.
 
 ```{r}
 get_coords <- function(add_list){
@@ -350,6 +404,8 @@ malls_list_coords <- get_coords(malls_list) %>%
   rename("mall_name" = "address")
 ```
 
+Some of the names of the shopping malls in our dataset are not up-to-date, which can cause issues in the analysis. For example, POMO has been renamed to GR.ID and OD Mall has been renamed to The Grandstand. Hence, we should address these issues before proceeding. One of the shopping malls, Yew Tee Shopping Centre, was not found when researched further, so we should remove this row from our dataset
+
 ```{r}
 malls_list_coords <- subset(malls_list_coords, mall_name!= "Yew Tee Shopping Centre")
 ```
@@ -366,9 +422,13 @@ for (i in 1:length(invalid_malls_list)) {
 }
 ```
 
+Then create a list to store unique names
+
 ```{r}
 malls_list <- sort(unique(malls_list_coords$mall_name))
 ```
+
+To retrieve the coordinates of shopping malls
 
 ```{r}
 malls_coords <- get_coords(malls_list)
@@ -425,6 +485,8 @@ prisch_sf <- st_as_sf(pri_sch,
 
 #### Select top 10 school
 
+I refer to this [website](https://www.salary.sg/2022/best-primary-schools-2022-by-popularity/) and check which are the exact top 10 primary schools and get their postal code, then I filtered them from the primary school dataset
+
 ```{r}
 postal_codes <- c(599986, 449761, 597610, 536451, 579767, 128806, 569405, 738907, 579646, 227988)
 
@@ -468,6 +530,8 @@ rail_network_sf <- st_read(dsn="data/geospatial/TrainStation_Feb2023", layer="Ra
 rail_network_sf<- st_transform(rail_network_sf, crs=3414)
 ```
 
+#### SuperMarket
+
 ```{r}
 supermkt_sf <- st_read("data/geospatial/supermarkets-geojson.geojson")
 ```
@@ -478,9 +542,19 @@ supermkt_sf<- st_transform(supermkt_sf, crs=3414)
 
 #### Check invalid geometry for locational factor
 
+Bus stop
+
 ```{r}
 length(which(st_is_valid(bus_sf) == FALSE))
 ```
+
+MRT
+
+```{r}
+length(which(st_is_valid(rail_network_sf) == FALSE))
+```
+
+It got invalid geometry and here is the code to make it valid:
 
 ```{r}
 # # Identify the invalid geometry
@@ -503,22 +577,6 @@ length(which(st_is_valid(bus_sf) == FALSE))
 #         addPolylines()
 #     })
 #     observe({
-#       if (!is.null(input$map_shape_click)) {
-#         clicked_shape <- input$map_shape_click
-#         if (clicked_shape$type == "polyline") {
-#           # Edit the clicked polyline shape
-#           edited_shape <- leafletProxy("map") %>%
-#             editPolyline(target = clicked_shape$id) %>%
-#             asJSON()
-#           rail_network_sf <- st_as_sf(fromJSON(edited_shape))
-#         }
-#       }
-#     })
-#   }
-# )
-# 
-# # Make the geometry valid
-# rail_network_sf <- st_make_valid(rail_network_sf)
 ```
 
 ```{r}
@@ -529,6 +587,8 @@ length(which(st_is_valid(rail_network_sf) == FALSE))
 length(which(st_is_valid(childcaresf) == FALSE))
 ```
 
+ElderlyCare
+
 ```{r}
 length(which(st_is_valid(Eldercare_sf) == FALSE))
 ```
@@ -537,73 +597,51 @@ length(which(st_is_valid(Eldercare_sf) == FALSE))
 length(which(st_is_valid(cbd_sf)))
 ```
 
+CBD
+
 ```{r}
 cbd_sf <- st_make_valid(cbd_sf)
 length(which(st_is_valid(cbd_sf) == FALSE))
 ```
+
+Childcare
 
 ```{r}
 length(which(st_is_valid(childcaresf) == FALSE))
 
 ```
 
+Kindergartens
+
 ```{r}
 length(which(st_is_valid(Kindergartens_sf) == FALSE))
 ```
+
+Malls
 
 ```{r}
 length(which(st_is_valid(malls_sf) == FALSE))
 ```
 
+Parks
+
 ```{r}
 length(which(st_is_valid(Parks_sf) == FALSE))
 ```
+
+Primary school
 
 ```{r}
 length(which(st_is_valid(prisch_sf) == FALSE))
 ```
 
+Top primary school
+
 ```{r}
 length(which(st_is_valid(top10prisch_sf) == FALSE))
 ```
 
-```{r}
-tmap_mode("view")
-tm_shape(hawker_sf) +
-  tm_dots(alpha=0.5, #affects transparency of points
-          col="#d62828",
-          size=0.05) +
-tm_shape(Parks_sf) +
-  tm_dots(alpha=0.5,
-          col="#f77f00",
-          size=0.05) +
-tm_shape(malls_sf) +
-  tm_dots(alpha=0.5,
-          col="#eae2b7",
-          size=0.05)
-```
-
-```{r}
-tmap_mode("view")
-tm_shape(childcaresf) +
-  tm_dots(alpha=0.5, #affects transparency of points
-          col="#2ec4b6",
-          size=0.05) +
-tm_shape(Eldercare_sf) +
-  tm_dots(alpha=0.5,
-          col="#e71d36",
-          size=0.05) +
-tm_shape(Kindergartens_sf) +
-  tm_dots(alpha=0.5,
-          col="#ff9f1c",
-          size=0.05) +
-tm_shape(top10prisch_sf) +
-  tm_dots(alpha=0.5,
-        col="#f4acb7",
-        size=0.05)
-```
-
-### Structural Factors
+### Calculate Proximity
 
 ```{r}
 library(units)
@@ -616,23 +654,21 @@ proximity <- function(df1, df2, varname) {
 ```
 
 ```{r}
-install.packages("matrixStats")
-library(matrixStats)
+# install.packages("matrixStats")
+# library(matrixStats)
 ```
 
 ```{r}
-proximity <- function(df1, df2, varname) {
-  dist_matrix <- st_distance(df1, df2) %>%
-    drop_units()
-  df1[,varname] <- rowMins(dist_matrix)
-  return(df1)
-}
+# proximity <- function(df1, df2, varname) {
+#   dist_matrix <- st_distance(df1, df2) %>%
+#     drop_units()
+#   df1[,varname] <- rowMins(dist_matrix)
+#   return(df1)
+# }
 ```
 
 ```{r}
-# resale.sf <- 
-#   # the columns will be truncated later on when viewing 
-#   # so we're limiting ourselves to two-character columns for ease of viewing between
+# resale.sf <-
 #   proximity(resale.sf, cbd_sf, "PROX_CBD") %>%
 #   proximity(., childcaresf, "PROX_CHILDCARE") %>%
 #   proximity(., Eldercare_sf, "PROX_ELDERCARE") %>%
@@ -641,7 +677,7 @@ proximity <- function(df1, df2, varname) {
 #   proximity(., Parks_sf, "PROX_PARK") %>%
 #   proximity(., top10prisch_sf, "PROX_TOPPRISCH") %>%
 #   proximity(., malls_sf, "PROX_MALL") %>%
-#   proximity(., supermkt_sf, "PROX_SPRMKT") 
+#   proximity(., supermkt_sf, "PROX_SPRMKT")
 
 ```
 
@@ -665,13 +701,9 @@ proximity <- function(df1, df2, varname) {
 
 ```{r}
 # resale.sf <- resale.sf %>%
-#   # sometimes, you might get an internal error: can't find `agr` columns
-#   # to circumvent, have an empty mutate()
-#   # you won't affect your columns, but it corrects the agr attribute names
-#   # reference: https://github.com/r-spatial/sf/issues/1472
 #   mutate() %>%
-#   rename("AREA_SQM" = "floor_area_sqm", 
-#          "LEASE_YRS" = "remaining_lease", 
+#   rename("AREA_SQM" = "floor_area_sqm",
+#          "LEASE_YRS" = "remaining_lease",
 #          "PRICE"= "resale_price") %>%
 #   relocate(`PRICE`)
 ```
@@ -679,20 +711,199 @@ proximity <- function(df1, df2, varname) {
 The figure above reveals a right skewed distribution. This means that more condominium units were transacted at relative lower price, and we need to normalize it by using log transformation
 
 ```{r}
-# st_write(resale.sf, "data/geospatial/resale-allfinal.shp")
+# st_write(resale.sf, "data/geospatial/resale-final_cleaned.shp")
 ```
 
 ```{r}
-resale_sf <- st_read(dsn="data/geospatial", layer="resale-allfinal")
+resale.sf <- st_read(dsn="data/geospatial", layer="resale-final_cleaned")
+```
+
+```{r}
+resale.sf <- resale.sf %>%
+  rename( "AREA_SQM"= "AREA_SQ",
+          "LEASE_YRS" = "LEASE_Y" , 
+          "PROX_CBD" = "PROX_CB",
+          "PROX_CHILDCARE" = "PROX_CH" ,
+          "PROX_ELDERCARE" = "PROX_EL",
+          "PROX_HAWKER"= "PROX_HA" ,
+        "PROX_PARK"=  "PROX_PA",
+          "PROX_MRT" ="PROX_MR",
+          "PROX_SPRMKT"= "PROX_SP",
+        "PROX_MALL"= "PROX_MA",
+         "NUM_KNDRGTN"= "NUM_KND" ,
+         "NUM_CHILDCARE"="NUM_CHI" ,
+        "NUM_BUS_STOP"="NUM_BUS" ,
+         "PROX_TOPPRISCH"= "PROX_TO"
+      
+      ) %>%
+  relocate(`PRICE`)
 ```
 
 ### Drawing Statistical Point Map
 
-FLOOR LEVEL
+```{r}
+tmap_mode("view")
+tmap_options(check.and.fix = TRUE)
+tm_shape(resale.sf) +  
+  tm_dots(col = "PRICE",
+          alpha = 0.6,
+          style="quantile") +
+  tm_view(set.zoom.limits = c(11,14))
+```
+
+From the statistical point map, we could observe that the southern and central area of the Singapore has a higher HDB resale price around 600k SGD
+
+### EDA
+
+```{r}
+ggplot(data=resale.sf, aes(x=`PRICE`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+```
+
+The figure above reveals a right skewed distribution. This means that more 4 room units were transacted at relative lower prices.Statistically, the skewed dsitribution can be normalised by using log transformation. We could see that most buildings seem to fall within 400k- 600k SGDdollars
+
+```{r}
+resale.sf <- resale.sf %>%
+  mutate(`LOG_PRICE` = log(PRICE))
+```
+
+```{r}
+ggplot(data=resale.sf, aes(x=`LOG_PRICE`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+```
+
+```{r}
+resale.sf <- resale.sf  %>%
+  mutate(resale.sf, LEASE_YRS = as.integer(str_sub(LEASE_YRS, 0, 2)))
+```
+
+### Multiple Histogram Plots distribution of variables
+
+Let's also look at the Multiple Histogram Plots distribution of variables
+
+```{r}
+library(ggpubr)
+```
+
+```{r}
+AREA_SQM <- ggplot(data = resale.sf, aes(x = `AREA_SQM`)) + 
+  geom_histogram(bins=20, color="black", fill = 'lightblue')
+
+PROX_CBD <- ggplot(data = resale.sf, aes(x = `PROX_CBD`)) + 
+  geom_histogram(bins=20, color="black", fill = 'lightblue')
+
+PROX_CHILDCARE <- ggplot(data = resale.sf, aes(x = `PROX_CHILDCARE`)) + 
+  geom_histogram(bins=20, color="black", fill = 'lightblue')
+
+PROX_ELDERCARE <- ggplot(data = resale.sf, aes(x = `PROX_ELDERCARE`)) + 
+  geom_histogram(bins=20, color="black", fill = 'lightblue')
+
+PROX_HAWKER <- ggplot(data = resale.sf, aes(x = `PROX_HAWKER`)) + 
+  geom_histogram(bins=20, color="black", fill = 'lightblue')
+
+PROX_MRT <- ggplot(data = resale.sf, aes(x = `PROX_MRT`)) + 
+  geom_histogram(bins=20, color="black", fill = 'lightblue')
+
+PROX_PARK <- ggplot(data = resale.sf, aes(x = `PROX_PARK`)) + 
+  geom_histogram(bins=20, color="black", fill = 'lightblue')
+
+PROX_TOPPRISCH <- ggplot(data = resale.sf, aes(x = `PROX_TOPPRISCH`)) + 
+  geom_histogram(bins=20, color="black", fill = 'lightblue')
+
+PROX_MALL <- ggplot(data = resale.sf, aes(x = `PROX_MALL`)) + 
+  geom_histogram(bins=20, color="black", fill = 'lightblue')
+
+PROX_SPRMKT <- ggplot(data = resale.sf, aes(x = `PROX_SPRMKT`)) + 
+  geom_histogram(bins=20, color="black", fill = 'lightblue')
+
+
+ggarrange(AREA_SQM, PROX_CBD, PROX_CHILDCARE, PROX_ELDERCARE, PROX_HAWKER, PROX_MRT, PROX_PARK, PROX_TOPPRISCH, PROX_MALL, PROX_SPRMKT, ncol = 2, nrow = 5)
+```
+
+```{r}
+NUM_CHILDCARE <- ggplot(data = resale.sf, aes(x = `NUM_CHILDCARE`)) + 
+  geom_histogram(bins=20, color="black", fill = 'lightblue')
+
+NUM_KNDRGTN <- ggplot(data = resale.sf, aes(x = `NUM_KNDRGTN`)) + 
+  geom_histogram(bins=20, color="black", fill = 'lightblue')
+
+NUM_BUS_STOP <- ggplot(data = resale.sf, aes(x = `NUM_BUS_STOP`)) + 
+  geom_histogram(bins=20, color="black", fill = 'lightblue')
+
+LEASE_YRS <- ggplot(data = resale.sf, aes(x = `LEASE_YRS`)) + 
+  geom_histogram(bins=20, color="black", fill = 'lightblue')
+
+ggarrange(NUM_KNDRGTN, NUM_CHILDCARE, NUM_BUS_STOP,LEASE_YRS, ncol = 2, nrow = 2)
+```
+
+```{r}
+summary(resale.sf)
+```
 
 ### Hedonic Pricing Modelling
 
-#### Simple Linear Regression Method
+#### Multiple Linear Regression Method
+
+```{r}
+resale_nogeo <- resale.sf %>%
+  st_drop_geometry() %>%
+  select_if(is.numeric) 
+corrplot::corrplot(cor(resale_nogeo[, 2:17]), 
+                   diag = FALSE, 
+                   order = "AOE",
+                   tl.pos = "td", 
+                   tl.cex = 0.5, 
+                   method = "number", 
+                   type = "upper")
+```
+
+Before building a multiple regression model, it is important to ensure that the indepdent variables used are not highly correlated to each other. If these highly correlated independent variables are used in building a regression model by mistake, the quality of the model will be compromised. This phenomenon is known as **multicollinearity in statistics**.
+
+From the scatterplot matrix , we could see that we have "lease_commence_date" highly corrlated to "Lease_Years" so we decided to remove "lease_commence_date" to prevent the issue of **multicollinearity**
+
+### Data Sampling
+
+```{r}
+training_data<-resale.sf %>% 
+  filter(month >= "2021-01" & month <= "2022-10")
+
+testing_data<-resale.sf %>%
+  filter(month >= "2022-10" & month <= "2022-12")
+```
+
+### Building a non-spatial multiple linear regression
+
+```{r}
+price_mlr <- lm(PRICE ~ AREA_SQM + PROX_CBD +  PROX_ELDERCARE + PROX_HAWKER+ PROX_MRT +  PROX_PARK + PROX_TOPPRISCH + PROX_MALL +PROX_SPRMKT +LEASE_YRS + NUM_CHILDCARE+NUM_KNDRGTN+ NUM_PrS,
+                data=training_data)
+write_rds(price_mlr, "data/ML_results/price_mlr.rds")
+gtsummary::tbl_regression(price_mlr)
+```
+
+#### Building Hedonic Pricing Models using GWmodel
+
+Converting the sf data.frame to SpatialPointDataFrame
+
+```{r}
+train_data_sp <- as_Spatial(training_data)
+train_data_sp
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
 
 ```{r}
 
