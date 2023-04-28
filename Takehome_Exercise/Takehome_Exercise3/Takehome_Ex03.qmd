@@ -998,7 +998,7 @@ library(grf)
 ```
 
 ```{r}
-write_rds(grf_adaptive, "data/ML_results/grf_adaptive.rds")
+# write_rds(grf_adaptive, "data/ML_results/grf_adaptive.rds")
 ```
 
 ```{r}
@@ -1022,34 +1022,34 @@ test_data <- cbind(testing_data, coords_test) %>%
 ```
 
 ```{r}
-gwRF_pred <- predict.grf(grf_adaptive, 
-                           test_data, 
-                           x.var.name="X",
-                           y.var.name="Y", 
-                           local.w=1,
-                           global.w=0)
+# gwRF_pred <- predict.grf(grf_adaptive, 
+#                            test_data, 
+#                            x.var.name="X",
+#                            y.var.name="Y", 
+#                            local.w=1,
+#                            global.w=0)
 ```
 
 ```{r}
-grf_pred <- write_rds(gwRF_pred, "data/ML_results/GRF_pred.rds")
+# grf_pred <- write_rds(gwRF_pred, "data/ML_results/GRF_pred.rds")
 ```
 
 ```{r}
-grf_pred <- read_rds("data/ML_results/GRF_pred.rds")
+# grf_pred <- read_rds("data/ML_results/GRF_pred.rds")
 ```
 
 ### Visualization
 
 ```{r}
-test_data_plot <- cbind(test_data, grf_pred)
+# test_data_plot <- cbind(test_data, grf_pred)
 ```
 
 ```{r}
-ggplot(data = test_data_plot,
-       aes(x = grf_pred,
-           y = PRICE)) +
-  geom_point() +
-  geom_abline(col = "Red")
+# ggplot(data = test_data_plot,
+#        aes(x = grf_pred,
+#            y = PRICE)) +
+#   geom_point() +
+#   geom_abline(col = "Red")
 ```
 
 ### Conclusion
