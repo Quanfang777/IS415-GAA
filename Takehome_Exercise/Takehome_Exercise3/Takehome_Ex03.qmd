@@ -52,7 +52,7 @@ Hence, we have to first identify the relevant location factors for this assignme
 ### Load Necessary Library
 
 ```{r}
-pacman::p_load(olsrr, corrplot, ggpubr, sf, spdep, GWmodel, tmap, tidyverse, gtsummary,readxl,jsonlite,rvest)
+pacman::p_load(olsrr, corrplot, sf, spdep, GWmodel, tmap, tidyverse, gtsummary,readxl,jsonlite,rvest)
 ```
 
 ### **Importing geospatial data (MP2019)**
@@ -257,63 +257,63 @@ The step including:
 3.  Using get_theme function to get the geospatial information of the Kindergarten
 
 ```{r}
-library(sf)
-library(onemapsgapi)
-
-token <- "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDUyLCJ1c2VyX2lkIjoxMDA1MiwiZW1haWwiOiJ0YWtvdGFrb3YwMDBAZ21haWwuY29tIiwiZm9yZXZlciI6ZmFsc2UsImlzcyI6Imh0dHA6XC9cL29tMi5kZmUub25lbWFwLnNnXC9hcGlcL3YyXC91c2VyXC9zZXNzaW9uIiwiaWF0IjoxNjc5NTU4NDYxLCJleHAiOjE2Nzk5OTA0NjEsIm5iZiI6MTY3OTU1ODQ2MSwianRpIjoiZDgyZTg1MDMzMTUzMTRkZjEzYjk5MWJmMDJkMDQ1NjIifQ.070RoJrraz95GuLVvYZpfzyMyGWQZ6S0D5FsLL39WGU"
+# library(sf)
+# library(onemapsgapi)
+# 
+# token <- "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEwMDUyLCJ1c2VyX2lkIjoxMDA1MiwiZW1haWwiOiJ0YWtvdGFrb3YwMDBAZ21haWwuY29tIiwiZm9yZXZlciI6ZmFsc2UsImlzcyI6Imh0dHA6XC9cL29tMi5kZmUub25lbWFwLnNnXC9hcGlcL3YyXC91c2VyXC9zZXNzaW9uIiwiaWF0IjoxNjc5NTU4NDYxLCJleHAiOjE2Nzk5OTA0NjEsIm5iZiI6MTY3OTU1ODQ2MSwianRpIjoiZDgyZTg1MDMzMTUzMTRkZjEzYjk5MWJmMDJkMDQ1NjIifQ.070RoJrraz95GuLVvYZpfzyMyGWQZ6S0D5FsLL39WGU"
 ```
 
 ```{r}
-search_themes(token, "kindergartens") 
+# search_themes(token, "kindergartens") 
 ```
 
 ```{r}
-Kindergartens_tibble <- get_theme(token, "kindergartens")
+# Kindergartens_tibble <- get_theme(token, "kindergartens")
 ```
 
 ```{r}
-Kindergartens_sf <- st_as_sf(Kindergartens_tibble, coords=c("Lng", "Lat"), crs=4326)
+# Kindergartens_sf <- st_as_sf(Kindergartens_tibble, coords=c("Lng", "Lat"), crs=4326)
 ```
 
 ```{r}
-Kindergartens_sf <- st_transform(Kindergartens_sf, crs=3414)
+# Kindergartens_sf <- st_transform(Kindergartens_sf, crs=3414)
 ```
 
 #### Childcare Center
 
 ```{r}
-search_themes(token, "childcare")
+# search_themes(token, "childcare")
 ```
 
 ```{r}
 
-library(sf)
-library(onemapsgapi)
-
-themetibble <- get_theme(token, "childcare")
-childcaresf <- st_as_sf(themetibble, coords=c("Lng", "Lat"), crs=4326)
+# library(sf)
+# library(onemapsgapi)
+# 
+# themetibble <- get_theme(token, "childcare")
+# childcaresf <- st_as_sf(themetibble, coords=c("Lng", "Lat"), crs=4326)
 
 ```
 
 ```{r}
-childcaresf <- st_transform(childcaresf, crs=3414)
+# childcaresf <- st_transform(childcaresf, crs=3414)
 ```
 
 ### Park
 
 ```{r}
-search_themes(token, "parks")
+# search_themes(token, "parks")
 ```
 
 ```{r}
-library(sf)
-library(onemapsgapi)
-Parks_themetibble <- get_theme(token, "nationalparks")
-Parks_sf <- st_as_sf(Parks_themetibble, coords=c("Lng", "Lat"), crs=4326)
+# library(sf)
+# library(onemapsgapi)
+# Parks_themetibble <- get_theme(token, "nationalparks")
+# Parks_sf <- st_as_sf(Parks_themetibble, coords=c("Lng", "Lat"), crs=4326)
 ```
 
 ```{r}
-Parks_sf <- st_transform(Parks_sf, crs=3414)
+# Parks_sf <- st_transform(Parks_sf, crs=3414)
 ```
 
 #### Shopping mall
@@ -329,158 +329,158 @@ The following code chunk performs three steps:
 -   Appends the extracted mall names to an empty mall_list.
 
 ```{r}
-get_coords <- function(add_list){
-  
-  # Create a data frame to store all retrieved coordinates
-  postal_coords <- data.frame()
-    
-  for (i in add_list){
-    #print(i)
-
-    r <- GET('https://developers.onemap.sg/commonapi/search?',
-           query=list(searchVal=i,
-                     returnGeom='Y',
-                     getAddrDetails='Y'))
-    data <- fromJSON(rawToChar(r$content))
-    found <- data$found
-    res <- data$results
-    
-    # Create a new data frame for each address
-    new_row <- data.frame()
-    
-    # If single result, append 
-    if (found == 1){
-      postal <- res$POSTAL 
-      lat <- res$LATITUDE
-      lng <- res$LONGITUDE
-      new_row <- data.frame(address= i, postal = postal, latitude = lat, longitude = lng)
-    }
-    
-    # If multiple results, drop NIL and append top 1
-    else if (found > 1){
-      # Remove those with NIL as postal
-      res_sub <- res[res$POSTAL != "NIL", ]
-      
-      # Set as NA first if no Postal
-      if (nrow(res_sub) == 0) {
-          new_row <- data.frame(address= i, postal = NA, latitude = NA, longitude = NA)
-      }
-      
-      else{
-        top1 <- head(res_sub, n = 1)
-        postal <- top1$POSTAL 
-        lat <- top1$LATITUDE
-        lng <- top1$LONGITUDE
-        new_row <- data.frame(address= i, postal = postal, latitude = lat, longitude = lng)
-      }
-    }
-
-    else {
-      new_row <- data.frame(address= i, postal = NA, latitude = NA, longitude = NA)
-    }
-    
-    # Add the row
-    postal_coords <- rbind(postal_coords, new_row)
-  }
-  return(postal_coords)
-}
+# get_coords <- function(add_list){
+#   
+#   # Create a data frame to store all retrieved coordinates
+#   postal_coords <- data.frame()
+#     
+#   for (i in add_list){
+#     #print(i)
+# 
+#     r <- GET('https://developers.onemap.sg/commonapi/search?',
+#            query=list(searchVal=i,
+#                      returnGeom='Y',
+#                      getAddrDetails='Y'))
+#     data <- fromJSON(rawToChar(r$content))
+#     found <- data$found
+#     res <- data$results
+#     
+#     # Create a new data frame for each address
+#     new_row <- data.frame()
+#     
+#     # If single result, append 
+#     if (found == 1){
+#       postal <- res$POSTAL 
+#       lat <- res$LATITUDE
+#       lng <- res$LONGITUDE
+#       new_row <- data.frame(address= i, postal = postal, latitude = lat, longitude = lng)
+#     }
+#     
+#     # If multiple results, drop NIL and append top 1
+#     else if (found > 1){
+#       # Remove those with NIL as postal
+#       res_sub <- res[res$POSTAL != "NIL", ]
+#       
+#       # Set as NA first if no Postal
+#       if (nrow(res_sub) == 0) {
+#           new_row <- data.frame(address= i, postal = NA, latitude = NA, longitude = NA)
+#       }
+#       
+#       else{
+#         top1 <- head(res_sub, n = 1)
+#         postal <- top1$POSTAL 
+#         lat <- top1$LATITUDE
+#         lng <- top1$LONGITUDE
+#         new_row <- data.frame(address= i, postal = postal, latitude = lat, longitude = lng)
+#       }
+#     }
+# 
+#     else {
+#       new_row <- data.frame(address= i, postal = NA, latitude = NA, longitude = NA)
+#     }
+#     
+#     # Add the row
+#     postal_coords <- rbind(postal_coords, new_row)
+#   }
+#   return(postal_coords)
+# }
 ```
 
 ```{r}
-url <- "https://en.wikipedia.org/wiki/List_of_shopping_malls_in_Singapore"
-malls_list <- list()
-
-for (i in 2:7){
-  malls <- read_html(url) %>%
-    html_nodes(xpath = paste('//*[@id="mw-content-text"]/div[1]/div[',as.character(i),']/ul/li',sep="") ) %>%
-    html_text()
-  malls_list <- append(malls_list, malls)
-}
+# url <- "https://en.wikipedia.org/wiki/List_of_shopping_malls_in_Singapore"
+# malls_list <- list()
+# 
+# for (i in 2:7){
+#   malls <- read_html(url) %>%
+#     html_nodes(xpath = paste('//*[@id="mw-content-text"]/div[1]/div[',as.character(i),']/ul/li',sep="") ) %>%
+#     html_text()
+#   malls_list <- append(malls_list, malls)
+# }
 ```
 
 ```{r}
-library(httr)
-malls_list_coords <- get_coords(malls_list) %>% 
-  rename("mall_name" = "address")
+# library(httr)
+# malls_list_coords <- get_coords(malls_list) %>% 
+#   rename("mall_name" = "address")
 ```
 
 Some of the names of the shopping malls in our dataset are not up-to-date, which can cause issues in the analysis. For example, POMO has been renamed to GR.ID and OD Mall has been renamed to The Grandstand. Hence, we should address these issues before proceeding. One of the shopping malls, Yew Tee Shopping Centre, was not found when researched further, so we should remove this row from our dataset
 
 ```{r}
-malls_list_coords <- subset(malls_list_coords, mall_name!= "Yew Tee Shopping Centre")
+# malls_list_coords <- subset(malls_list_coords, mall_name!= "Yew Tee Shopping Centre")
 ```
 
 ```{r}
-invalid_malls<- subset(malls_list_coords, is.na(malls_list_coords$postal))
-invalid_malls_list <- unique(invalid_malls$mall_name)
-corrected_malls <- c("Clarke Quay", "City Gate", "Raffles Holland V", "Knightsbridge", "Mustafa Centre", "GR.ID", "Shaw House",
-                     "The Poiz Centre", "Velocity @ Novena Square", "Singapore Post Centre", "PLQ Mall", "KINEX", "The Grandstand")
-
-for (i in 1:length(invalid_malls_list)) {
-  malls_list_coords <- malls_list_coords %>% 
-    mutate(mall_name = ifelse(as.character(mall_name) == invalid_malls_list[i], corrected_malls[i], as.character(mall_name)))
-}
+# invalid_malls<- subset(malls_list_coords, is.na(malls_list_coords$postal))
+# invalid_malls_list <- unique(invalid_malls$mall_name)
+# corrected_malls <- c("Clarke Quay", "City Gate", "Raffles Holland V", "Knightsbridge", "Mustafa Centre", "GR.ID", "Shaw House",
+#                      "The Poiz Centre", "Velocity @ Novena Square", "Singapore Post Centre", "PLQ Mall", "KINEX", "The Grandstand")
+# 
+# for (i in 1:length(invalid_malls_list)) {
+#   malls_list_coords <- malls_list_coords %>% 
+#     mutate(mall_name = ifelse(as.character(mall_name) == invalid_malls_list[i], corrected_malls[i], as.character(mall_name)))
+# }
 ```
 
 Then create a list to store unique names
 
 ```{r}
-malls_list <- sort(unique(malls_list_coords$mall_name))
+# malls_list <- sort(unique(malls_list_coords$mall_name))
 ```
 
 To retrieve the coordinates of shopping malls
 
 ```{r}
-malls_coords <- get_coords(malls_list)
+# malls_coords <- get_coords(malls_list)
 ```
 
 ```{r}
-malls_coords[(is.na(malls_coords$postal) | is.na(malls_coords$latitude) | is.na(malls_coords$longitude)), ]
+# malls_coords[(is.na(malls_coords$postal) | is.na(malls_coords$latitude) | is.na(malls_coords$longitude)), ]
 ```
 
 ```{r}
-malls_sf <- st_as_sf(malls_coords,
-                    coords = c("longitude", 
-                               "latitude"),
-                    crs=4326) %>%
-  st_transform(crs = 3414)
+# malls_sf <- st_as_sf(malls_coords,
+#                     coords = c("longitude", 
+#                                "latitude"),
+#                     crs=4326) %>%
+#   st_transform(crs = 3414)
 ```
 
 #### Primary School
 
 ```{r}
-pri_sch <- read_csv("data/geospatial/general-information-of-schools.csv")
+# pri_sch <- read_csv("data/geospatial/general-information-of-schools.csv")
 ```
 
 ```{r}
-pri_sch <- pri_sch %>%
-  filter(mainlevel_code == "PRIMARY"| mainlevel_code == "MIXED LEVELS") %>%
-  select(school_name, address, postal_code, mainlevel_code)
+# pri_sch <- pri_sch %>%
+#   filter(mainlevel_code == "PRIMARY"| mainlevel_code == "MIXED LEVELS") %>%
+#   select(school_name, address, postal_code, mainlevel_code)
 ```
 
 ```{r}
-prisch_list <- sort(unique(pri_sch$postal_code))
+# prisch_list <- sort(unique(pri_sch$postal_code))
 ```
 
 ```{r}
-prisch_coords <- get_coords(prisch_list)
+# prisch_coords <- get_coords(prisch_list)
 ```
 
 ```{r}
-prisch_coords[(is.na(prisch_coords$postal) | is.na(prisch_coords$latitude) | is.na(prisch_coords$longitude)), ]
+# prisch_coords[(is.na(prisch_coords$postal) | is.na(prisch_coords$latitude) | is.na(prisch_coords$longitude)), ]
 ```
 
 ```{r}
-prisch_coords = prisch_coords[c("postal","latitude", "longitude")]
-pri_sch <- left_join(pri_sch, prisch_coords, by = c('postal_code' = 'postal'))
+# prisch_coords = prisch_coords[c("postal","latitude", "longitude")]
+# pri_sch <- left_join(pri_sch, prisch_coords, by = c('postal_code' = 'postal'))
 ```
 
 ```{r}
-prisch_sf <- st_as_sf(pri_sch,
-                    coords = c("longitude", 
-                               "latitude"),
-                    crs=4326) %>%
-  st_transform(crs = 3414)
+# prisch_sf <- st_as_sf(pri_sch,
+#                     coords = c("longitude", 
+#                                "latitude"),
+#                     crs=4326) %>%
+#   st_transform(crs = 3414)
 ```
 
 #### Select top 10 school
@@ -488,56 +488,56 @@ prisch_sf <- st_as_sf(pri_sch,
 I refer to this [website](https://www.salary.sg/2022/best-primary-schools-2022-by-popularity/) and check which are the exact top 10 primary schools and get their postal code, then I filtered them from the primary school dataset
 
 ```{r}
-postal_codes <- c(599986, 449761, 597610, 536451, 579767, 128806, 569405, 738907, 579646, 227988)
-
-# Filter prisch_sf for rows with postal code in the vector
-top10prisch_sf <- prisch_sf %>%
-  filter(postal_code %in% postal_codes)
-top10prisch_sf
+# postal_codes <- c(599986, 449761, 597610, 536451, 579767, 128806, 569405, 738907, 579646, 227988)
+# 
+# # Filter prisch_sf for rows with postal code in the vector
+# top10prisch_sf <- prisch_sf %>%
+#   filter(postal_code %in% postal_codes)
+# top10prisch_sf
 ```
 
 #### Hawker Center
 
 ```{r}
-hawker_sf <- st_read("data/geospatial/hawker-centres-kml.kml") 
+# hawker_sf <- st_read("data/geospatial/hawker-centres-kml.kml") 
 ```
 
 ```{r}
-hawker_sf <- st_transform(hawker_sf, crs=3414)
+# hawker_sf <- st_transform(hawker_sf, crs=3414)
 ```
 
 ```{r}
-st_crs(hawker_sf)
+# st_crs(hawker_sf)
 ```
 
 #### Bus Stop
 
 ```{r}
-bus_sf <- st_read(dsn="data/geospatial/BusStop_Feb2023", layer="BusStop")
+# bus_sf <- st_read(dsn="data/geospatial/BusStop_Feb2023", layer="BusStop")
 ```
 
 ```{r}
-bus_sf <- st_transform(bus_sf, crs=3414)
+# bus_sf <- st_transform(bus_sf, crs=3414)
 ```
 
 #### Mrt
 
 ```{r}
-rail_network_sf <- st_read(dsn="data/geospatial/TrainStation_Feb2023", layer="RapidTransitSystemStation")
+# rail_network_sf <- st_read(dsn="data/geospatial/TrainStation_Feb2023", layer="RapidTransitSystemStation")
 ```
 
 ```{r}
-rail_network_sf<- st_transform(rail_network_sf, crs=3414)
+# rail_network_sf<- st_transform(rail_network_sf, crs=3414)
 ```
 
 #### SuperMarket
 
 ```{r}
-supermkt_sf <- st_read("data/geospatial/supermarkets-geojson.geojson")
+# supermkt_sf <- st_read("data/geospatial/supermarkets-geojson.geojson")
 ```
 
 ```{r}
-supermkt_sf<- st_transform(supermkt_sf, crs=3414)
+# supermkt_sf<- st_transform(supermkt_sf, crs=3414)
 ```
 
 #### Check invalid geometry for locational factor
@@ -545,13 +545,13 @@ supermkt_sf<- st_transform(supermkt_sf, crs=3414)
 Bus stop
 
 ```{r}
-length(which(st_is_valid(bus_sf) == FALSE))
+# length(which(st_is_valid(bus_sf) == FALSE))
 ```
 
 MRT
 
 ```{r}
-length(which(st_is_valid(rail_network_sf) == FALSE))
+# length(which(st_is_valid(rail_network_sf) == FALSE))
 ```
 
 It got invalid geometry and here is the code to make it valid:
@@ -580,77 +580,77 @@ It got invalid geometry and here is the code to make it valid:
 ```
 
 ```{r}
-length(which(st_is_valid(rail_network_sf) == FALSE))
+# length(which(st_is_valid(rail_network_sf) == FALSE))
 ```
 
 ```{r}
-length(which(st_is_valid(childcaresf) == FALSE))
+# length(which(st_is_valid(childcaresf) == FALSE))
 ```
 
 ElderlyCare
 
 ```{r}
-length(which(st_is_valid(Eldercare_sf) == FALSE))
+# length(which(st_is_valid(Eldercare_sf) == FALSE))
 ```
 
 ```{r}
-length(which(st_is_valid(cbd_sf)))
+# length(which(st_is_valid(cbd_sf)))
 ```
 
 CBD
 
 ```{r}
-cbd_sf <- st_make_valid(cbd_sf)
-length(which(st_is_valid(cbd_sf) == FALSE))
+# cbd_sf <- st_make_valid(cbd_sf)
+# length(which(st_is_valid(cbd_sf) == FALSE))
 ```
 
 Childcare
 
 ```{r}
-length(which(st_is_valid(childcaresf) == FALSE))
+# length(which(st_is_valid(childcaresf) == FALSE))
 
 ```
 
 Kindergartens
 
 ```{r}
-length(which(st_is_valid(Kindergartens_sf) == FALSE))
+# length(which(st_is_valid(Kindergartens_sf) == FALSE))
 ```
 
 Malls
 
 ```{r}
-length(which(st_is_valid(malls_sf) == FALSE))
+# length(which(st_is_valid(malls_sf) == FALSE))
 ```
 
 Parks
 
 ```{r}
-length(which(st_is_valid(Parks_sf) == FALSE))
+# length(which(st_is_valid(Parks_sf) == FALSE))
 ```
 
 Primary school
 
 ```{r}
-length(which(st_is_valid(prisch_sf) == FALSE))
+# length(which(st_is_valid(prisch_sf) == FALSE))
 ```
 
 Top primary school
 
 ```{r}
-length(which(st_is_valid(top10prisch_sf) == FALSE))
+# length(which(st_is_valid(top10prisch_sf) == FALSE))
 ```
 
 ### Calculate Proximity
 
 ```{r}
-library(units)
-proximity <- function(df1, df2, varname) {
-  dist_matrix <- st_distance(df1, df2) %>%
-    drop_units()
-  df1[,varname] <- rowMins(dist_matrix)
-  return(df1)
-}
+# library(units)
+# proximity <- function(df1, df2, varname) {
+#   dist_matrix <- st_distance(df1, df2) %>%
+#     drop_units()
+#   df1[,varname] <- rowMins(dist_matrix)
+#   return(df1)
+# }
 ```
 
 ```{r}
@@ -707,8 +707,6 @@ proximity <- function(df1, df2, varname) {
 #          "PRICE"= "resale_price") %>%
 #   relocate(`PRICE`)
 ```
-
-The figure above reveals a right skewed distribution. This means that more condominium units were transacted at relative lower price, and we need to normalize it by using log transformation
 
 ```{r}
 # st_write(resale.sf, "data/geospatial/resale-final_cleaned.shp")
@@ -956,14 +954,104 @@ coords_test<-read_rds("data/ML_results/coords_test.rds")
 Dropping geometry field
 
 ```{r}
+library(dplyr)
+library(sf)
+```
+
+```{r}
 train_data <- training_data %>% 
   st_drop_geometry()
-
 write_rds(train_data, "data/ML_results/train_data.rds")
 ```
 
-### Calibrating Random Forest Model
+## Calibrating Random Forest Model
 
 ```{r}
+pacman::p_load(sf, tmap, sfdep, tidyverse, olsrr, ggpubr, GWmodel, SpatialML, tidymodels, jsonlite, readxl, Rfast, corrplot, gtsummary, spdep, Metrics, ggplot)
+```
+
+```{r}
+install.packages("grf")
+library(grf)
+```
+
+```{r}
+# set.seed(1234)
+# bw_adaptive <- bw.gwr(PRICE ~ AREA_SQM + PROX_CBD +  PROX_ELDERCARE + PROX_HAWKER+ PROX_MRT +  PROX_PARK + PROX_TOPPRISCH + PROX_MALL +PROX_SPRMKT +LEASE_YRS + NUM_CHILDCARE + NUM_KNDRGTN,
+#                       data=train_data_nogeom, 
+#                       approach="CV", 
+#                       kernel="gaussian", 
+#                       adaptive=TRUE, 
+#                       longlat=FALSE)
+```
+
+![](data/ML_results/GRFW.png)
+
+```{r}
+# set.seed(1234)
+# grf_adaptive <- grf(formula = PRICE ~ AREA_SQM + PROX_CBD +  PROX_ELDERCARE + PROX_HAWKER+ PROX_MRT +  PROX_PARK + PROX_TOPPRISCH + PROX_MALL +PROX_SPRMKT +LEASE_YRS + NUM_CHILDCARE + NUM_KNDRGTN,
+#                      dframe=train_data,
+#                      bw=75,
+#                      kernel="adaptive",
+#                      coords=coords_train,
+#                       ntree = 5)
+```
+
+```{r}
+write_rds(grf_adaptive, "data/ML_results/grf_adaptive.rds")
+```
+
+```{r}
+file.exists("data/ML_results/grf_adaptive.rds")
+```
+
+```{r}
+grf_adaptive <- read_rds("data/ML_results/grf_adaptive.rds")
 
 ```
+
+```{r}
+class(grf_adaptive)
+```
+
+### Prediction
+
+```{r}
+test_data <- cbind(testing_data, coords_test) %>%
+  st_drop_geometry()
+```
+
+```{r}
+gwRF_pred <- predict.grf(grf_adaptive, 
+                           test_data, 
+                           x.var.name="X",
+                           y.var.name="Y", 
+                           local.w=1,
+                           global.w=0)
+```
+
+```{r}
+grf_pred <- write_rds(gwRF_pred, "data/ML_results/GRF_pred.rds")
+```
+
+```{r}
+grf_pred <- read_rds("data/ML_results/GRF_pred.rds")
+```
+
+### Visualization
+
+```{r}
+test_data_plot <- cbind(test_data, grf_pred)
+```
+
+```{r}
+ggplot(data = test_data_plot,
+       aes(x = grf_pred,
+           y = PRICE)) +
+  geom_point() +
+  geom_abline(col = "Red")
+```
+
+### Conclusion
+
+Upon comparing two models, it was observed that the Random Forest Model outperformed the Linear Regression model. The results from the Random Forest Model suggest that, at a 5% significance level, except PROX_TOPPRISCH and PROX_SPRMKT, the other variables are significantly associated with the dependent variable PRICE. However, it is possible that there are other factors that were not accounted for in the analysis.
